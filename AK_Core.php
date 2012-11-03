@@ -1,6 +1,6 @@
 <?php
 
-class AK_core {
+class AK_Core {
 
 	private static $instance = NULL;
 	

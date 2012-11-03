@@ -1,6 +1,6 @@
 <?php
 
-class BaseController {
+class AK_BaseController {
 	
 	/**
 	 * GETパラメータ配列
