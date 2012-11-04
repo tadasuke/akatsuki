@@ -20,6 +20,7 @@ class AK_BaseController {
 	 */
 	public function beforeRun() {
 		
+		// ƒpƒ‰ƒ[ƒ^‚ð“à•”•Ï”‚É•Û‘¶
 		$this -> getParam  = $_GET;
 		$this -> postParam = $_POST;
 		unset( $_GET );
