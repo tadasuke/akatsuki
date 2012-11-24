@@ -16,16 +16,21 @@ class AK_BaseController {
 	//---------------------------------- public ----------------------------------
 	
 	/**
-	 * 前処理
+	 * 初期処理
 	 */
-	public function beforeRun() {
-		
+	final public function initial() {
 		// パラメータを内部変数に保存
 		$this -> getParam  = $_GET;
 		$this -> postParam = $_POST;
 		unset( $_GET );
 		unset( $_POST );
-		
+	}
+	
+	/**
+	 * 前処理
+	 */
+	public function beforeRun() {
+		;
 	}
 	
 	/**

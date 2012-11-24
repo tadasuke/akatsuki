@@ -46,9 +46,9 @@ abstract class AK_Db{
 	
 	/**
 	 * コンストラクタ
-	 * @param string $tableName
+	 * @param string $dbIdenTificationName
 	 */
-	public function __construct( $dbIdenTificationName ) {
+	final public function __construct( $dbIdenTificationName = AK::DEFAULT_DB_IDENTIFICATION_NAME ) {
 		$this -> dbIdemtificationName = $dbIdenTificationName;
 	}
 	

@@ -52,10 +52,10 @@ class AK_DaoFactory{
 	
 	/**
 	 * DB設定情報配列追加
-	 * @param string $dbIdentificaitonName
 	 * @param AK_DbConfig $akDbConfigObj
+	 * @param string $dbIdentificaitonName
 	 */
-	public static function addDbConfig( $dbIdentificaitonName, AK_DbConfig $akDbConfigObj ) {
+	public static function addDbConfig( AK_DbConfig $akDbConfigObj, $dbIdentificaitonName = AK::DEFAULT_DB_IDENTIFICATION_NAME ) {
 		
 		self::$dbConfigArray[$dbIdentificaitonName] = $akDbConfigObj;
 		

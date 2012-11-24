@@ -1,5 +1,8 @@
 <?php
 
+require_once 'AK_BaseController.php';
+require_once 'AK_Define.php';
+
 class AK_Core {
 
 	private static $instance = NULL;
@@ -63,6 +66,14 @@ class AK_Core {
 		
 		// コントローラオブジェクト作成
 		$obj = new $this -> controllerName;
+		
+		// 初期処理
+		if ( call_user_func( array( $obj, 'initial' ) ) === FALSE ) {
+			echo( 'exec beforeRun error!!' );
+			exit;
+		} else {
+			;
+		}
 		
 		// 前処理
 		if ( call_user_func( array( $obj, 'beforeRun' ) ) === FALSE ) {
