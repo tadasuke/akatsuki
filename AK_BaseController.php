@@ -3,24 +3,24 @@
 class AK_BaseController {
 	
 	/**
-	 * GETƒpƒ‰ƒ[ƒ^”z—ñ
+	 * GETãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿é…åˆ—
 	 * @var array
 	 */
 	private $getParam = array();
 	
 	/**
-	 * ƒ|ƒXƒgƒpƒ‰ƒ[ƒ^”z—ñ
+	 * POSTãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿é…åˆ—
 	 */
 	private $postParam = array();
 	
 	//---------------------------------- public ----------------------------------
 	
 	/**
-	 * ‘Oˆ—
+	 * å‰å‡¦ç†
 	 */
 	public function beforeRun() {
 		
-		// ƒpƒ‰ƒ[ƒ^‚ğ“à•”•Ï”‚É•Û‘¶
+		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã‚’å†…éƒ¨å¤‰æ•°ã«ä¿å­˜
 		$this -> getParam  = $_GET;
 		$this -> postParam = $_POST;
 		unset( $_GET );
@@ -29,7 +29,7 @@ class AK_BaseController {
 	}
 	
 	/**
-	 * Œãˆ—
+	 * å¾Œå‡¦ç†
 	 */
 	public function afterRun() {
 		;
@@ -38,7 +38,7 @@ class AK_BaseController {
 	//--------------------------------- protected ----------------------------------
 	
 	/**
-	 * ƒQƒbƒgƒpƒ‰ƒ[ƒ^æ“¾
+	 * GETãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿å–å¾—
 	 * @param string $key
 	 * @return string
 	 */
@@ -47,7 +47,7 @@ class AK_BaseController {
 	}
 	
 	/**
-	 * ƒ|ƒXƒgƒpƒ‰ƒ[ƒ^æ“¾
+	 * POSTãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿å–å¾—
 	 * @param string $key
 	 * @return string
 	 */
@@ -56,8 +56,8 @@ class AK_BaseController {
 	}
 	
 	/**
-	 * ƒpƒ‰ƒ[ƒ^æ“¾
-	 * “¯ˆê‚ÌƒL[‚ª‚ ‚Á‚½ê‡‚ÍGET—Dæ
+	 * ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿å–å¾—
+	 * åŒä¸€ã®ã‚­ãƒ¼åãŒå­˜åœ¨ã™ã‚‹å ´åˆã¯POSTã‚’å„ªå…ˆ
 	 * @param string $key
 	 * @return string
 	 */

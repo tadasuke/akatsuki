@@ -5,7 +5,7 @@ class AK_Core {
 	private static $instance = NULL;
 	
 	/**
-	 * ƒRƒ“ƒgƒ[ƒ‰[–¼
+	 * ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©å
 	 * @var string
 	 */
 	private $controllerName = NULL;
@@ -14,7 +14,7 @@ class AK_Core {
 	}
 	
 	/**
-	 * ƒAƒNƒVƒ‡ƒ“–¼
+	 * ã‚¢ã‚¯ã‚·ãƒ§ãƒ³å
 	 * @var string
 	 */
 	private $actionName = NULL;
@@ -23,7 +23,7 @@ class AK_Core {
 	}
 	
 	/**
-	 * ƒRƒ“ƒgƒ[ƒ‰[ƒfƒBƒŒƒNƒgƒŠ
+	 * ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
 	 * @var string
 	 */
 	private $controllerDir = NULL;
@@ -32,7 +32,7 @@ class AK_Core {
 	}
 	
 	/**
-	 * ƒCƒ“ƒXƒ^ƒ“ƒXæ“¾
+	 * ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å–å¾—
 	 * @return AK_core
 	 */
 	public static function getInstance() {
@@ -42,7 +42,7 @@ class AK_Core {
 	//------------------------------------------------------------------------
 	
 	/**
-	 * ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	 * ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	 */
 	private function __construct() {
 		
@@ -54,17 +54,17 @@ class AK_Core {
 	
 	
 	/**
-	 * Às
+	 * å®Ÿè¡Œ
 	 */
 	public function run(){
 		
-		// ƒRƒ“ƒgƒ[ƒ‰‚ÌPHPƒtƒ@ƒCƒ‹‚ğƒCƒ“ƒNƒ‹[ƒh
+		// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©èª­ã¿è¾¼ã¿
 		require_once $this -> controllerDir . '/' . $this -> controllerName . '.php';
 		
-		// ƒRƒ“ƒgƒ[ƒ‰ƒIƒuƒWƒFƒNƒg‚ğì¬
+		// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆä½œæˆ
 		$obj = new $this -> controllerName;
 		
-		// ‘Oˆ—Às
+		// å‰å‡¦ç†
 		if ( call_user_func( array( $obj, 'beforeRun' ) ) === FALSE ) {
 			echo( 'exec beforeRun error!!' );
 			exit;
@@ -72,13 +72,13 @@ class AK_Core {
 			;
 		}
 		
-		// ƒAƒNƒVƒ‡ƒ“Às
+		// å‡¦ç†å®Ÿè¡Œ
 		if ( call_user_func( array( $obj, $this -> actionName ) ) === FALSE ) {
 			echo( 'exec action error!!' );
 			exit;
 		}
 		
-		// Œãˆ—
+		// å¾Œå‡¦ç†
 		if ( call_user_func( array( $obj, 'afterRun' ) ) === FALSE ) {
 			echo( 'exec afterRun error!!' );
 			exit;
@@ -92,7 +92,7 @@ class AK_Core {
 	//--------------------------------- private -------------------------------
 	
 	/**
-	 * URL‚ğ‰ğÍ‚µ‚ÄŒÄ‚Ño‚·ƒNƒ‰ƒXAƒƒ\ƒbƒh‚ğİ’è
+	 * URLã‚’å…ƒã«å‘¼ã³å‡ºã™ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ã¨ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã‚’è¨­å®š
 	 */
 	private function _parse(){
 		

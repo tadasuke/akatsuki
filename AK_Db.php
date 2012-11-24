@@ -1,6 +1,7 @@
 <?php
 
 require_once 'db/AK_DaoFactory.class.php';
+require_once 'db/AK_DbConfig.php';
 
 /**
  * DB基本クラス
@@ -8,31 +9,11 @@ require_once 'db/AK_DaoFactory.class.php';
  */
 abstract class AK_Db{
 	
-	//----------
-	// DB接続情報
-	//----------
-	private static $dsn = NULL;
-	public static function setDsn( $dsn ) {
-		self::$dsn = $dsn;
-	}
-	private static $user = NULL;
-	public static function setUser( $user ) {
-		self::$user = $user;
-	}
-	private static $password = NULL;
-	public static function setPassword( $password ) {
-		self::$password = $password;
-	}
-	
-	
 	/**
-	 * テーブル名
+	 * DB識別名
 	 * @var string
 	 */
-	protected $tableName;
-	public function getTableName() {
-		return $this -> tableName;
-	}
+	private $dbIdemtificationName;
 	
 	/**
 	 * SQL
@@ -61,7 +42,15 @@ abstract class AK_Db{
 		return $this -> valueArray;
 	}
 	
+	//-------------------------- コンストラクタ -----------------------------
 	
+	/**
+	 * コンストラクタ
+	 * @param string $tableName
+	 */
+	public function __construct( $dbIdenTificationName ) {
+		$this -> dbIdemtificationName = $dbIdenTificationName;
+	}
 	
 	//--------------------------- public ----------------------------------
 	
@@ -70,7 +59,7 @@ abstract class AK_Db{
 	 */
 	public function startTransaction() {
 		
-		$dao = DaoFactory::getDao( $this -> tableName );
+		$dao = AK_DaoFactory::getDao( $this -> dbIdemtificationName );
 		$dao -> startTransaction();
 		
 	}
@@ -81,7 +70,7 @@ abstract class AK_Db{
 	 */
 	public function select() {
 		
-		$dao = DaoFactory::getDao( $this -> tableName );
+		$dao = AK_DaoFactory::getDao( $this -> dbIdemtificationName );
 		$this -> valueArray = $dao -> select( $this -> sqlcmd, $this -> bindArray );
 		
 	}
@@ -93,7 +82,7 @@ abstract class AK_Db{
 	 */
 	public function exec() {
 		
-		$dao = DaoFactory::getDao( $this -> tableName );
+		$dao = AK_DaoFactory::getDao( $this -> dbIdemtificationName );
 		$returnValue = $dao -> exec( $this -> sqlcmd, $this -> bindArray );
 		
 		return $returnValue;

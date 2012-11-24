@@ -4,36 +4,34 @@
  * データベース接続クラス
  * @author TADASUKE
  */
-class Dao {
+class AK_Dao {
 	
 	/**
 	 * コネクション
-	 * @access private
 	 * @var PDO
 	 */
 	private $connection = null;
 	
 	/**
 	 * トランザクションフラグ
-	 * @access private
 	 * @var boolean
 	 */
 	private $transactionFlg = FALSE;
 	
 	/**
-	 * @access private
+	 * 接続文字列
 	 * @var string
 	 */
 	private $dsn = null;
 	
 	/**
-	 * @access private
+	 * ユーザ名
 	 * @var string
 	 */
 	private $user = null;
 	
 	/**
-	 * @access private
+	 * パスワード
 	 * @var string
 	 */
 	private $password = null;
@@ -44,22 +42,14 @@ class Dao {
 	 * コンストラクタ
 	 * @param string $tableType
 	 */
-	public function __construct( $tableType ) {
+	public function __construct( AK_DbConfig $akDbConfigObj ) {
 		
-		//OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'START' );
-		//OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'table_type:' . $tableType );
-		
-		// 接続情報設定
-		$this -> dsn      = Config::getConfig( $tableType, 'dsn' );
-		$this -> user     = Config::getConfig( $tableType, 'user' );
-		$this -> password = Config::getConfig( $tableType, 'password' );
-		//OutputLog::outLog( OutputLog::DEBUG , __METHOD__, __LINE__, 'dsn:'      . $this -> dsn );
-		//OutputLog::outLog( OutputLog::DEBUG , __METHOD__, __LINE__, 'user:'     . $this -> user );
-		//OutputLog::outLog( OutputLog::DEBUG , __METHOD__, __LINE__, 'password:' . $this -> password );
+		$this -> dsn      = $akDbConfigObj -> getDsn();
+		$this -> user     = $akDbConfigObj -> getUser();
+		$this -> password = $akDbConfigObj -> getPassword();
 		
 		$this -> connect();
 		
-		//OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'END' );
 	}
 	
 	
@@ -71,33 +61,18 @@ class Dao {
 	 */
 	public function select( $sqlcmd, $bindArray = array() ) {
 		
-		//OutputLog::outLog( OutputLog::INFO, __METHOD__, __LINE__, 'START' );
-		//OutputLog::outLog( OutputLog::INFO, __METHOD__, __LINE__, 'sqlcmd:' . $sqlcmd );
-		/*
-		foreach ( $bindArray as $data ) {
-			OutputLog::outLog( OutputLog::INFO, __METHOD__, __LINE__, 'data:' . $data[0] . ',' . $data[1] );
-		}
-		*/
-		
 		$sth = $this -> connection -> prepare( $sqlcmd );
 		$i = 1;
 		foreach ( $bindArray as $bind ) {
-			$sth -> bindParam( $i, $bind[0], $bind[1] );
+			$sth -> bindValue( $i, $bind );
 			$i++;
 		}
 		$sth -> execute();
 		$valueArray = array();
 		while ( $value = $sth -> fetch( PDO::FETCH_ASSOC ) ) {
-			/*
-			foreach ( $value as $key => $val ) {
-				OutputLog::outLog( OutputLog::DEBUG, __METHOD__, __LINE__, $key . '=>' . $val );
-			} 
-			*/
 			$valueArray[] = $value;
 		}
 
-		//OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'END' );
-		
 		return $valueArray;
 		
 	}
@@ -112,7 +87,6 @@ class Dao {
 	 */
 	public function exec( $sqlcmd, $bindArray = array() ) {
 		
-		//OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'START' );
 		OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'sqlcmd:' . $sqlcmd );
 		foreach ( $bindArray as $data ) {
 			OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'data:' . $data[0] . ',' . $data[1] );
@@ -124,7 +98,7 @@ class Dao {
 		$sth = $this -> connection -> prepare( $sqlcmd );
 		$i = 1;
 		foreach ( $bindArray as $bind ) {
-			$sth -> bindParam( $i, $bind[0], $bind[1] );
+			$sth -> bindValue( $i, $bind );
 			$i++;
 		}
 		$sth -> execute();
@@ -132,8 +106,6 @@ class Dao {
 		$lastInsertId = $this -> getLastInsertId();
 		$returnValue = ($lastInsertId == 0) ? $sth -> rowCount() : $lastInsertId;
 
-		OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'returnValue:' . $returnValue );
-		//OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'END' );
 		return $returnValue;
 		
 	}
@@ -145,11 +117,8 @@ class Dao {
 	 */
 	public function getLastInsertId() {
 		
-		//OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'START' );
-		
 		$lastInserId = $this -> connection -> lastInsertId();
 		
-		//OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'END' );
 		return $lastInserId;
 	}
 	
@@ -189,13 +158,6 @@ class Dao {
 		
 	}
 	
-	/**
-	 * テーブルロック解除
-	 */
-	public function unlockTables() {
-		$this -> connection -> exec( "UNLOCK TABLES" );
-	}
-	
 	
 	/**
 	 * トランザクション開始
@@ -206,7 +168,6 @@ class Dao {
 		if ( $this -> transactionFlg === FALSE ) {
 			$this -> connection -> beginTransaction();
 			$this -> transactionFlg = TRUE;
-			OutputLog::outLog( OutputLog::INFO, __METHOD__, __LINE__, 'START_TRANSCTION!!:' . $this -> dsn );
 		} else {
 			;
 		}

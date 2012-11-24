@@ -1,12 +1,12 @@
 <?php
 
-require_once 'models/db/Dao.class.php';
+require_once 'db/AK_Dao.class.php';
 
 /**
  * DAO作成
  * @author TADASUKE
  */
-class DaoFactory{
+class AK_DaoFactory{
 	
 	/**
 	 * DAO配列
@@ -14,42 +14,31 @@ class DaoFactory{
 	 */
 	private static $daoArray = array();
 	
+	/**
+	 * DB接続情報配列
+	 * @var unknown_type
+	 */
+	private static $dbConfigArray = array();
 	
+	
+	//----------------------------------- public static -------------------------------------
 	
 	/**
 	 * DAO取得
-	 * @param string $tableName
-	 * @return Dao
+	 * @param string $dbIdemtificationName
+	 * @return AK_Dao
 	 */
-	public static function getDao( $tableName ) {
-		
-		//OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'START' );
-		//OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'table_name:' . $tableName );
-		
-		//---------------
-		// テーブルタイプ取得
-		//---------------
-		// テーブル名が設定されていなかった場合
-		if ( is_null( $tableName ) === TRUE ) {
-			$tableType = Config::getConfig( 'default_table_type', 'table_type' );
-		// テーブル名が設定されていた場合
-		} else {
-			$tableType = Config::getConfig( 'table_type', $tableName );
-		}
-		
-		//OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'table_type:' . $tableType );
+	public static function getDao( $dbIdemtificationName ) {
 		
 		// 配列の中に存在しなかった場合
-		if ( array_key_exists( $tableType, self::$daoArray ) === FALSE ) {
-			self::$daoArray[$tableType] = new Dao( $tableType );
+		if ( array_key_exists( $dbIdemtificationName, self::$daoArray ) === FALSE ) {
+			self::$daoArray[$dbIdemtificationName] = new AK_Dao( self::$dbConfigArray[$dbIdemtificationName] );
 		} else {
 			;
 		}
 		
-		//OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'END' );
-		return self::$daoArray[$tableType];
+		return self::$daoArray[$dbIdemtificationName];
 	}
-	
 	
 	
 	/**
@@ -58,6 +47,18 @@ class DaoFactory{
 	 */
 	public static function getAllDao() {
 		return self::$daoArray;
-	} 
+	}
+	
+	
+	/**
+	 * DB設定情報配列追加
+	 * @param string $dbIdentificaitonName
+	 * @param AK_DbConfig $akDbConfigObj
+	 */
+	public static function addDbConfig( $dbIdentificaitonName, AK_DbConfig $akDbConfigObj ) {
+		
+		self::$dbConfigArray[$dbIdentificaitonName] = $akDbConfigObj;
+		
+	}
 	
 }

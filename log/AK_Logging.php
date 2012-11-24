@@ -3,19 +3,19 @@
 class AK_Logging extends AK_Log {
 	
 	/**
-	 * ƒƒOo—Íƒx[ƒXƒfƒBƒŒƒNƒgƒŠ
+	 * ãƒ­ã‚°ãƒ•ã‚¡ã‚¤ãƒ«å
 	 * @var string
 	 */
 	private $logFileName = NULL;
 	
 	/**
-	 * ƒƒOo—ÍƒŒƒxƒ‹
+	 * å‡ºåŠ›ãƒ­ã‚°ãƒ¬ãƒ™ãƒ«
 	 * @var int
 	 */
 	private $outLogLevel = NULL;
 	
 	/**
-	 * ƒvƒƒZƒXID
+	 * ãƒ—ãƒ­ã‚»ã‚¹ID
 	 * @var string
 	 */
 	private $processId = NULL;
@@ -25,14 +25,14 @@ class AK_Logging extends AK_Log {
 	protected function __construct( $logFileName, $outLogLevel ) {
 		$this -> logFileName = $logFileName;
 		$this -> outLogLevel = $outLogLevel;
-		// ƒvƒƒZƒXIDì¬
+		// ãƒ—ãƒ­ã‚»ã‚¹IDè¨­å®š
 		$this -> processId = substr( sha1( microtime( TRUE ) . rand() ), 0, 8 );
 	}
 	
 	//---------------------------- public --------------------------------
 	
 	/**
-	 * ƒƒOo—Í
+	 * ãƒ­ã‚°å‡ºåŠ›
 	 * @param mixed $string
 	 */
 	public function log( $logLevel, $method, $line, $message ) {
@@ -54,7 +54,7 @@ class AK_Logging extends AK_Log {
 	//-------------------------- private --------------------------------
 	
 	/**
-	 * ƒƒOƒƒbƒZ[ƒWì¬
+	 * ãƒ­ã‚°ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ä½œæˆ
 	 * @param string $method
 	 * @param int $line
 	 * @param string $message
