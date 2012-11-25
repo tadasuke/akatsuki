@@ -16,9 +16,12 @@ class AK_DaoFactory{
 	
 	/**
 	 * DB接続情報配列
-	 * @var unknown_type
+	 * @var array[AK_DbConfig]
 	 */
 	private static $dbConfigArray = array();
+	public static function getDbConfigArray() {
+		return self::$dbConfigArray;
+	}
 	
 	
 	//----------------------------------- public static -------------------------------------
