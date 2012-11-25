@@ -26,6 +26,12 @@ class AK_Core {
 	}
 	
 	/**
+	 * ユーザパラメータ配列
+	 * @var array
+	 */
+	private $userParamArray = array();
+	
+	/**
 	 * コントローラディレクトリ
 	 * @var string
 	 */
@@ -68,7 +74,7 @@ class AK_Core {
 		$obj = new $this -> controllerName;
 		
 		// 初期処理
-		if ( call_user_func( array( $obj, 'initial' ) ) === FALSE ) {
+		if ( call_user_func( array( $obj, 'initial' ), $this -> userParamArray ) === FALSE ) {
 			echo( 'exec beforeRun error!!' );
 			exit;
 		} else {
@@ -113,9 +119,17 @@ class AK_Core {
 		$this -> controllerName = ucfirst( $array[1] ) . 'Controller';
 		$this -> actionName     = ucfirst( $array[2] ) . 'Action';
 		
-	}
-	
-	
+		$i = 0;
+		foreach ( $array as $data ) {
+			$i++;
+			if ( $i <= 3 ) {
+				continue;
+			} else {
+				;
+			}
+			$this -> userParamArray[] = $data;
+		}
 		
+	}
 		
 }

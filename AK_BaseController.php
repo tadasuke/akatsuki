@@ -6,24 +6,32 @@ class AK_BaseController {
 	 * GETパラメータ配列
 	 * @var array
 	 */
-	private $getParam = array();
+	protected $getParam = array();
 	
 	/**
 	 * POSTパラメータ配列
+	 * @var array
 	 */
-	private $postParam = array();
+	protected $postParam = array();
+	
+	/**
+	 * ユーザパラメータ配列
+	 * @var array
+	 */
+	protected $userParam = array();
 	
 	//---------------------------------- public ----------------------------------
 	
 	/**
 	 * 初期処理
 	 */
-	final public function initial() {
+	final public function initial( $userParamArray ) {
 		// パラメータを内部変数に保存
 		$this -> getParam  = $_GET;
 		$this -> postParam = $_POST;
-		unset( $_GET );
-		unset( $_POST );
+		$this -> userParam = $userParamArray;
+		//unset( $_GET );
+		//unset( $_POST );
 	}
 	
 	/**
