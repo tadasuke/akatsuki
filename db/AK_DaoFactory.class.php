@@ -10,7 +10,7 @@ class AK_DaoFactory{
 	
 	/**
 	 * DAO配列
-	 * @var array
+	 * @var array[AK_Dao]
 	 */
 	private static $daoArray = array();
 	
@@ -46,7 +46,7 @@ class AK_DaoFactory{
 	
 	/**
 	 * 全DAO取得
-	 * @return array
+	 * @return array[AK_Dao]
 	 */
 	public static function getAllDao() {
 		return self::$daoArray;
@@ -61,6 +61,19 @@ class AK_DaoFactory{
 	public static function addDbConfig( AK_DbConfig $akDbConfigObj, $dbIdentificaitonName = AK::DEFAULT_DB_IDENTIFICATION_NAME ) {
 		
 		self::$dbConfigArray[$dbIdentificaitonName] = $akDbConfigObj;
+		
+	}
+	
+	
+	/**
+	 * 終了処理
+	 */
+	public static function endProcess() {
+		
+		$daoArray = self::getAllDao();
+		foreach ( $daoArray as $dao ) {
+			$dao -> commit();
+		}
 		
 	}
 	
