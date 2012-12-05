@@ -8,6 +8,8 @@ require_once 'ak_mem/AK_MemConfig.php';
  */
 class AK_Mem extends Memcache{
 	
+	const DEFAULT_PORT = 11211;
+	
 	/**
 	 * インスタンス
 	 * @var AK_Mem
@@ -25,8 +27,12 @@ class AK_Mem extends Memcache{
 	 * @param AK_MemConfig
 	 * @return AK_Mem
 	 */
-	public static function getInstance( AK_MemConfig $config ) {
-		if ( is_null( self::$instance ) ) self::$instance = new self( $config );
+	public static function getInstance( AK_MemConfig $config = NULL ) {
+		if ( is_null( self::$instance ) === TRUE ) {
+			self::$instance = new self( $config );
+		} else {
+			;
+		}
 		return self::$instance;
 	}
 	
@@ -36,34 +42,55 @@ class AK_Mem extends Memcache{
 	 * コンストラクタ
 	 * @param AK_MemConfig
 	 */
-	private function __construct( AK_MemConfig $akMemConfig ) {
-		$this -> _connect( $akMemConfig );
+	private function __construct( AK_MemConfig $akMemConfig = NULL ) {
+		if ( is_null( $akMemConfig ) === FALSE ) {
+			$this -> addServer( $akMemConfig );
+		} else {
+			;
+		}
 	}
 	
 	//--------------------------- public ----------------------------------
 	
+	/**
+	 * セット
+	 * @param string $key
+	 * @param mixed $value
+	 * @param int $keepTime
+	 */
 	public function set( $key, $value, $keepTime = 0 ) {
-		echo( 'set!!<br/>' );
 		parent::set( $key, $value, 0, 0 );
 	}
 	
+	/**
+	 * ゲット
+	 * @param string $key
+	 * @return mixed
+	 */
 	public function get( $key ) {
-		echo( 'get!!<br/>' );
 		$value = parent::get( $key );
 		return $value;
 	}
 	
-	//---------------------------- private ---------------------------------
-	
 	/**
-	 * 接続
-	 * @param AK_MemConfig
+	 * 接続先追加
+	 * @param mixed
 	 */
-	private function _connect( $akMemConfig ) {
+	public function addServer( $akMemConfigArray ) {
 	
+		if ( is_array( $akMemConfigArray ) === FALSE ) {
+			$akMemConfigArray = array( $akMemConfigArray );
+		} else {
+			;
+		}
+		
 		// Memcacheに接続
-		$result = parent::connect( $akMemConfig -> getHostName(), $akMemConfig -> getPort() );
+		foreach ( $akMemConfigArray as $akMemConfig ) {
+			$result = parent::addServer( $akMemConfig -> getHostName(), $akMemConfig -> getPort() );
+		}
 	
 	}
+	
+	//---------------------------- private ---------------------------------
 	
 }
