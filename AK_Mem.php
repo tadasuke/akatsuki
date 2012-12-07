@@ -10,6 +10,33 @@ class AK_Mem extends Memcache{
 	
 	const DEFAULT_PORT = 11211;
 	
+	const GET_TYPE_VARIABLE = 1;
+	const GET_TYPE_MEMCACHE = 2;
+	
+	/**
+	 * 圧縮フラグ
+	 * @var int
+	 */
+	private static $compressedFlg = NULL;
+	public static function setCompressedFlg( $compressedFlg ) {
+		self::$compressedFlg = $compressedFlg;
+	}
+	public static function getCompressedFlg() {
+		return self::$compressedFlg;
+	}
+	
+	/**
+	 * 自動コミットフラグ
+	 * @var boolean
+	 */
+	private static $autoCommitFlg = FALSE;
+	public static function setAutoCommitFlg( $autoCommitFlg ) {
+		self::$autoCommitFlg = $autoCommitFlg;
+	}
+	public static function getAutoCommitFlg() {
+		return self::$autoCommitFlg;
+	}
+	
 	/**
 	 * インスタンス
 	 * @var AK_Mem
@@ -21,6 +48,15 @@ class AK_Mem extends Memcache{
 	 * @var array
 	 */
 	private $valueArray = array();
+	
+	/**
+	 * 獲得タイプ
+	 * @var int
+	 */
+	private $getType = NULL;
+	public function getGetType() {
+		return $this -> getType;
+	}
 	
 	/**
 	 * インスタンス取得
@@ -50,6 +86,20 @@ class AK_Mem extends Memcache{
 		}
 	}
 	
+	//---------------------------- デストラクタ ------------------------------
+	
+	/**
+	 * デストラクタ
+	 */
+	public function __destruct() {
+		if ( self::$autoCommitFlg === TRUE ) {
+			$this -> commit();
+		} else {
+			;
+		}
+	}
+	
+	
 	//--------------------------- public ----------------------------------
 	
 	/**
@@ -59,7 +109,12 @@ class AK_Mem extends Memcache{
 	 * @param int $keepTime
 	 */
 	public function set( $key, $value, $keepTime = 0 ) {
-		parent::set( $key, $value, 0, 0 );
+		//parent::set( $key, $value, 0, 0 );
+		$this -> valueArray[$key] = array(
+			  'value'       => $value
+			, 'keep_time'   => $keepTime
+			, 'set_mem_flg' => TRUE
+		);
 	}
 	
 	/**
@@ -68,8 +123,36 @@ class AK_Mem extends Memcache{
 	 * @return mixed
 	 */
 	public function get( $key ) {
-		$value = parent::get( $key );
+		if ( isset( $this -> valueArray[$key] ) === FALSE ) {
+			$value = parent::get( $key );
+			$this -> valueArray[$key] = array(
+				  'value'       => $value
+				, 'keep_time'   => 0
+				, 'set_mem_flg' => FALSE
+			);
+			$this -> getType = self::GET_TYPE_MEMCACHE;
+		} else {
+			$value = $this -> valueArray[$key]['value'];
+			$this -> getType = self::GET_TYPE_VARIABLE;
+		}
 		return $value;
+	}
+	
+	/**
+	 * 削除
+	 * @param string $key
+	 */
+	public function delete( $key ) {
+		parent::delete( $key );
+		unset( $this -> valueArray[$key] );
+	}
+	
+	/**
+	 * 初期化
+	 */
+	public function flush() {
+		parent::flush();
+		$this -> valueArray = array();
 	}
 	
 	/**
@@ -86,9 +169,29 @@ class AK_Mem extends Memcache{
 		
 		// Memcacheに接続
 		foreach ( $akMemConfigArray as $akMemConfig ) {
-			$result = parent::addServer( $akMemConfig -> getHostName(), $akMemConfig -> getPort() );
+			$result = parent::addServer( $akMemConfig -> getHostName(), $akMemConfig -> getPort(), FALSE );
 		}
 	
+	}
+	
+	/**
+	 * コミット
+	 */
+	public function commit() {
+		foreach ( $this -> valueArray as $key => $data ) {
+			if ( $data['set_mem_flg'] === TRUE ) {
+				parent::set( $key, $data['value'], $data['keep_time'], self::$compressedFlg );
+			} else {
+				;
+			}
+		}
+	}
+	
+	/**
+	 * ロールバック
+	 */
+	public function rollback() {
+		$this -> valueArray = array();
 	}
 	
 	//---------------------------- private ---------------------------------
