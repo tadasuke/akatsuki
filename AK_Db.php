@@ -1,7 +1,7 @@
 <?php
 
-require_once 'db/AK_DaoFactory.class.php';
-require_once 'db/AK_DbConfig.php';
+require_once 'ak_db/AK_DaoFactory.class.php';
+require_once 'ak_db/AK_DbConfig.php';
 
 /**
  * DB基本クラス

@@ -1,6 +1,6 @@
 <?php
 
-require_once 'log/AK_Logging.php';
+require_once 'ak_log/AK_Logging.php';
 
 class AK_Log {
 	
@@ -14,13 +14,13 @@ class AK_Log {
 	const DEBUG  = 7;
 	
 	/**
-	 * ƒƒMƒ“ƒOƒNƒ‰ƒX
+	 * ï¿½ï¿½ï¿½Mï¿½ï¿½ï¿½Oï¿½Nï¿½ï¿½ï¿½X
 	 * @var AK_Logging
 	 */
 	private static $akLoggingClass = NULL;
 	
 	/**
-	 * ƒƒMƒ“ƒOƒNƒ‰ƒXƒZƒbƒg
+	 * ï¿½ï¿½ï¿½Mï¿½ï¿½ï¿½Oï¿½Nï¿½ï¿½ï¿½Xï¿½Zï¿½bï¿½g
 	 * @param string $baseDir
 	 * @param int $outLogLevel
 	 * @return boolean
@@ -36,7 +36,7 @@ class AK_Log {
 	}
 	
 	/**
-	 * ƒƒMƒ“ƒOƒNƒ‰ƒXŽæ“¾
+	 * ï¿½ï¿½ï¿½Mï¿½ï¿½ï¿½Oï¿½Nï¿½ï¿½ï¿½Xï¿½æ“¾
 	 * @return AK_Logging
 	 */
 	public static function getLogClass() {
@@ -46,12 +46,12 @@ class AK_Log {
 	//---------------------------------- private ------------------------------
 	
 	/**
-	 * ƒƒOo—ÍŽ–‘O€”õ
+	 * ï¿½ï¿½ï¿½Oï¿½oï¿½ÍŽï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½
 	 * @param string $baseDir
 	 */
 	private static function setting( $baseDir ) {
 		
-		// o—ÍƒfƒBƒŒƒNƒgƒŠ‚ðì¬‚·‚é
+		// ï¿½oï¿½Íƒfï¿½Bï¿½ï¿½ï¿½Nï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ì¬ï¿½ï¿½ï¿½ï¿½
 		if ( file_exists( $baseDir ) === FALSE ) {
 			mkdir( $baseDir );
 		} else {
