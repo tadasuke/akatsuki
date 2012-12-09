@@ -1,7 +1,5 @@
 <?php
 
-require_once 'db/AK_Dao.class.php';
-
 /**
  * DAO作成
  * @author TADASUKE

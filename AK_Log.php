@@ -14,13 +14,13 @@ class AK_Log {
 	const DEBUG  = 7;
 	
 	/**
-	 * ���M���O�N���X
+	 * ログ出力クラス
 	 * @var AK_Logging
 	 */
 	private static $akLoggingClass = NULL;
 	
 	/**
-	 * ���M���O�N���X�Z�b�g
+	 * ログ出力クラス設定
 	 * @param string $baseDir
 	 * @param int $outLogLevel
 	 * @return boolean
@@ -36,7 +36,7 @@ class AK_Log {
 	}
 	
 	/**
-	 * ���M���O�N���X�擾
+	 * インスタンス取得
 	 * @return AK_Logging
 	 */
 	public static function getLogClass() {
@@ -46,12 +46,12 @@ class AK_Log {
 	//---------------------------------- private ------------------------------
 	
 	/**
-	 * ���O�o�͎��O����
+	 * ログ出力先設定
 	 * @param string $baseDir
 	 */
 	private static function setting( $baseDir ) {
 		
-		// �o�̓f�B���N�g�����쐬����
+		// ログ出力先ディレクトリが存在しなければ作成
 		if ( file_exists( $baseDir ) === FALSE ) {
 			mkdir( $baseDir );
 		} else {
