@@ -2,6 +2,8 @@
 
 class AK_BaseController {
 	
+	const RESPONSE_TYPE_JSON = 1;
+	
 	/**
 	 * GETパラメータ配列
 	 * @var array
@@ -19,6 +21,24 @@ class AK_BaseController {
 	 * @var array
 	 */
 	private $userParam = array();
+	
+	/**
+	 * レスポンスパラメータ
+	 * @var array
+	 */
+	private $responseParam = array();
+	public function setResponseParam( array $array ) {
+		$this -> responseParam = $array;
+	}
+	
+	/**
+	 * レスポンスタイプ
+	 * @var int
+	 */
+	private $responseType = self::RESPONSE_TYPE_JSON;
+	public function setResponseType( $responseType ) {
+		$this -> responseType = $responseType;
+	}
 	
 	//---------------------------------- public ----------------------------------
 	
@@ -46,6 +66,28 @@ class AK_BaseController {
 	 */
 	public function afterRun() {
 		;
+	}
+	
+	/**
+	 * 終了処理
+	 */
+	final public function terminal() {
+		
+		// レスポンスパラメータが存在した場合
+		if ( count( $this -> responseParam ) > 0 ) {
+			// レスポンスがJSON形式の場合
+			if ( $this -> responseType == self::RESPONSE_TYPE_JSON ) {
+				$response = json_encode( $this -> responseParam );
+				header( "X-Content-Type-Options: nosniff" );
+				header( "Content-type: application/json" );
+				echo( $response );
+			} else {
+				;
+			}
+		} else {
+			;
+		}
+		
 	}
 	
 	//--------------------------------- protected ----------------------------------

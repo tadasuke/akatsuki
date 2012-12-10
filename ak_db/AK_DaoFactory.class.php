@@ -64,15 +64,24 @@ class AK_DaoFactory{
 	
 	
 	/**
-	 * 終了処理
+	 * オールコミット
 	 */
-	public static function endProcess() {
-		
+	public static function allCommit() {
 		$daoArray = self::getAllDao();
 		foreach ( $daoArray as $dao ) {
 			$dao -> commit();
 		}
-		
+	}
+	
+	
+	/**
+	 * オールロールバック
+	 */
+	public static function allRollback() {
+		$daoArray = self::getAllDao();
+		foreach ( $daoArray as $dao ) {
+			$dao -> rollback();
+		}
 	}
 	
 }

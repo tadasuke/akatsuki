@@ -102,6 +102,14 @@ class AK_Core {
 		} else {
 			;
 		}
+		
+		// 終了処理
+		if ( call_user_func( array( $obj, 'terminal' ) ) === FALSE ) {
+			echo( 'exec terminal error!!' );
+			exit;
+		} else {
+			;
+		}
 	
 	}
 	
