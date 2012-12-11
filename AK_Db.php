@@ -1,6 +1,7 @@
 <?php
 
 require_once 'ak_db/AK_DaoFactory.class.php';
+require_once 'ak_db/AK_Dao.class.php';
 require_once 'ak_db/AK_DbConfig.php';
 
 /**
