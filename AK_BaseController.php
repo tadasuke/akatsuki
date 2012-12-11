@@ -150,18 +150,4 @@ class AK_BaseController {
 		return $postParamArray;
 	}
 	
-	
-	/**
-	 * JSON形式でレスポンス
-	 */
-	protected function returnJsonResponse( array $returnResponse ) {
-	
-		// JSON設定
-		$json = json_encode( $returnResponse );
-	
-		header( "Content-type:text/plain" );
-		echo( $json );
-	
-	}
-	
 }
