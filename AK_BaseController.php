@@ -30,6 +30,9 @@ class AK_BaseController {
 	public function setResponseParam( array $array ) {
 		$this -> responseParam = $array;
 	}
+	public function getResponseParam() {
+		return $this -> responseParam;
+	}
 	
 	/**
 	 * レスポンスタイプ
@@ -148,6 +151,24 @@ class AK_BaseController {
 			if ( !array_key_exists( $key, $postParamArray ) ) $postParamArray[$key] = $value;
 		}
 		return $postParamArray;
+	}
+	
+	
+	/**
+	 * レスポンスパラメータ数返却
+	 */
+	protected function getResponseParamCount() {
+		return count( $this -> responseParam );
+	}
+	
+	
+	/**
+	 * レスポンスパラメータ追加
+	 * @param string $key
+	 * @param mixed $value
+	 */
+	protected function addResponseParam( $key, $value ) {
+		$this -> responseParam[$key] = $value;
 	}
 	
 }
