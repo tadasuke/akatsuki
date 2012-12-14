@@ -194,6 +194,4 @@ class AK_Mem extends Memcache{
 		$this -> valueArray = array();
 	}
 	
-	//---------------------------- private ---------------------------------
-	
 }
