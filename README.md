@@ -12,13 +12,18 @@ LAMP+Memcacheにのみ対応しております。
 
 # AK_core
 ルーティングをしてくれるベースとなる機能です。  
+## ルーティング
 **index.php**  
-     require_once 'AK_Core.php';  
-     // インスタンス取得  
-     $akCoreClass = AK_Core::getInstance();  
-     // コントローラディレクトリ設定  
-     $akCoreClass -> setControllerDir( '/work/akatsuki_demo/application/controllers' );  
-     // 処理開始  
-     $akCoreClass -> run();  
 
-こんな感じ
+     require_once 'AK_Core.php';
+     // インスタンス取得
+     $akCoreClass = AK_Core::getInstance();
+     // コントローラディレクトリ設定
+     $akCoreClass -> setControllerDir( '/hoge/application/controllers' );
+     // 処理開始
+     $akCoreClass -> run();
+
+*/user/index*  
+が叩かれた場合  
+/hoge/application/controllers/UserController.phpのindexActionが呼ばれる。
+
