@@ -1,7 +1,6 @@
 <?php
 
-require_once 'AK_BaseController.php';
-require_once 'AK_Define.php';
+require_once 'ak_core/AK_BaseController.php';
 
 class AK_Core {
 

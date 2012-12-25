@@ -153,6 +153,14 @@ class AK_BaseController {
 		return $postParamArray;
 	}
 	
+	/**
+	 * 全ユーザパラメータ取得
+	 * @return array
+	 */
+	protected function getAllUserParam() {
+		return $this -> userParam;
+	}
+	
 	
 	/**
 	 * レスポンスパラメータ数返却

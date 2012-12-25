@@ -10,6 +10,8 @@ require_once 'ak_db/AK_DbConfig.php';
  */
 abstract class AK_Db{
 	
+	const DEFAULT_DB_IDENTIFICATION_NAME = '0';
+	
 	/**
 	 * DB識別名
 	 * @var string
