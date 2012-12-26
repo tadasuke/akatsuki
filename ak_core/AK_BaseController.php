@@ -3,6 +3,7 @@
 class AK_BaseController {
 	
 	const RESPONSE_TYPE_JSON = 1;
+	const RESPONSE_TYPE_JSONP = 2;
 	
 	/**
 	 * GETパラメータ配列
@@ -23,14 +24,23 @@ class AK_BaseController {
 	private $userParam = array();
 	
 	/**
+	 * コールバック名
+	 * @var string
+	 */
+	private $callback = NULL;
+	protected function setCallback( $callback ) {
+		$this -> callback = $callback;
+	}
+	
+	/**
 	 * レスポンスパラメータ
 	 * @var array
 	 */
 	private $responseParam = array();
-	public function setResponseParam( array $array ) {
+	protected function setResponseParam( array $array ) {
 		$this -> responseParam = $array;
 	}
-	public function getResponseParam() {
+	protected function getResponseParam() {
 		return $this -> responseParam;
 	}
 	
@@ -39,7 +49,7 @@ class AK_BaseController {
 	 * @var int
 	 */
 	private $responseType = self::RESPONSE_TYPE_JSON;
-	public function setResponseType( $responseType ) {
+	protected function setResponseType( $responseType ) {
 		$this -> responseType = $responseType;
 	}
 	
@@ -53,8 +63,6 @@ class AK_BaseController {
 		$this -> getParam  = $_GET;
 		$this -> postParam = $_POST;
 		$this -> userParam = $userParamArray;
-		//unset( $_GET );
-		//unset( $_POST );
 	}
 	
 	/**
@@ -78,12 +86,18 @@ class AK_BaseController {
 		
 		// レスポンスパラメータが存在した場合
 		if ( count( $this -> responseParam ) > 0 ) {
-			// レスポンスがJSON形式の場合
+			// レスポンスタイプがJSON形式の場合
 			if ( $this -> responseType == self::RESPONSE_TYPE_JSON ) {
 				$response = json_encode( $this -> responseParam );
 				header( "X-Content-Type-Options: nosniff" );
 				header( "Content-type: application/json" );
 				echo( $response );
+			// レスポンスタイプがJSONP形式の場合
+			} else if ( $this -> responseType == self::RESPONSE_TYPE_JSONP ) {
+				$response = json_encode( $this -> responseParam );
+				echo( $this -> callback . '(' . $response . ')' );
+				header( "X-Content-Type-Options: nosniff" );
+				header( "Content-type: application/javascript" );
 			} else {
 				;
 			}
