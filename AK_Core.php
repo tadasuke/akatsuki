@@ -134,9 +134,6 @@ class AK_Core {
 		}
 		$this -> actionName .= 'Action';
 		
-		echo( $this -> actionName );
-		exit;
-		
 		$i = 0;
 		foreach ( $array as $data ) {
 			$i++;
