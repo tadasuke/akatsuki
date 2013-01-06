@@ -39,4 +39,13 @@ class AK_Registry {
 		return self::$registryArray;
 	}
 	
+	/**
+	 * 登録済チェック
+	 * @param string $key
+	 * @return boolean
+	 */
+	public static function isRegistry( $key ) {
+		return array_key_exists( $key, self::$registryArray );
+	}
+	
 }
