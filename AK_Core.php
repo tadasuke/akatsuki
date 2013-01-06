@@ -10,7 +10,7 @@ class AK_Core {
 	 * コントローラ名
 	 * @var string
 	 */
-	private $controllerName = NULL;
+	private $controllerName = '';
 	public function getControllerName() {
 		return $this -> controllerName;
 	}
@@ -19,7 +19,7 @@ class AK_Core {
 	 * アクション名
 	 * @var string
 	 */
-	private $actionName = NULL;
+	private $actionName = '';
 	public function getActionName() {
 		return $this -> actionName;
 	}
@@ -123,8 +123,19 @@ class AK_Core {
 		$array = explode( '?', $_SERVER['REQUEST_URI'] );
 		$array = explode( '/', $array[0] );
 		
+		// コントローラ名設定
 		$this -> controllerName = ucfirst( $array[1] ) . 'Controller';
-		$this -> actionName     = ucfirst( $array[2] ) . 'Action';
+		
+		// アクション名設定
+		$actionArray = explode( '-', $array[2] );
+		$this -> actionName = $actionArray[0];
+		for ( $i = 1; $i < count( $actionArray ); $i++ ) {
+			$this -> actionName .= ucfirst( $actionArray[$i] );
+		}
+		$this -> actionName .= 'Action';
+		
+		echo( $this -> actionName );
+		exit;
 		
 		$i = 0;
 		foreach ( $array as $data ) {
