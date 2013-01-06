@@ -3,13 +3,13 @@
 class AK_Registry {
 	
 	/**
-	 * ƒŒƒWƒXƒgƒŠ”z—ñ
+	 * ãƒ¬ã‚¸ã‚¹ãƒˆãƒªé…åˆ—
 	 * @var array
 	 */
 	public static $registryArray = array();
 	
 	/**
-	 * ƒŒƒWƒXƒgƒŠæ“¾
+	 * ãƒ¬ã‚¸ã‚¹ãƒˆãƒªå–å¾—
 	 * @param string $key
 	 */
 	public static function get( $key ) {
@@ -17,7 +17,7 @@ class AK_Registry {
 	}
 	
 	/**
-	 * ƒŒƒWƒXƒgƒŠƒZƒbƒg
+	 * ãƒ¬ã‚¸ã‚¹ãƒˆãƒªè¨­å®š
 	 * @param string $key
 	 * @param mixed $value
 	 */
@@ -26,14 +26,14 @@ class AK_Registry {
 	}
 	
 	/**
-	 * ƒŒƒWƒXƒgƒŠ‘Síœ
+	 * ãƒ¬ã‚¸ã‚¹ãƒˆãƒªå…¨å‰Šé™¤
 	 */
 	public static function flush() {
 		self::$registryArray = array();
 	}
 	
 	/**
-	 * ‘SƒŒƒWƒXƒgƒŠæ“¾
+	 * å…¨ãƒ¬ã‚¸ã‚¹ãƒˆãƒªå–å¾—
 	 */
 	public static function getAllRegistry() {
 		return self::$registryArray;
