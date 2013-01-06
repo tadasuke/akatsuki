@@ -4,6 +4,37 @@ require_once 'ak_core/AK_BaseController.php';
 
 class AK_Core {
 
+	/**
+	 * アクション実行フラグ
+	 * @var boolean
+	 */
+	private static $execActionFlg = TRUE;
+	public static function setExecActionFlg( $execActionFlg ) {
+		self::$execActionFlg = $execActionFlg;
+	}
+	
+	/**
+	 * 後処理実行フラグ
+	 * @var boolean
+	 */
+	private static $execAfterRunFlg = TRUE;
+	public static function setExecAfterRunFlg( $execAfterRunFlg ) {
+		self::$execAfterRunFlg = $execAfterRunFlg;
+	}
+	
+	/**
+	 * 終了処理実行フラグ
+	 * @var boolean
+	 */
+	private static $execTerminalFlg = TRUE;
+	public static function setExecTerminalFlg( $execTerminalFlg ) {
+		self::$execTerminalFlg = $execTerminalFlg;
+	}
+	
+	/**
+	 * インスタンス
+	 * @var AK_Core
+	 */
 	private static $instance = NULL;
 	
 	/**
@@ -89,23 +120,35 @@ class AK_Core {
 		}
 		
 		// 処理実行
-		if ( call_user_func( array( $obj, $this -> actionName ) ) === FALSE ) {
-			echo( 'exec action error!!' );
-			exit;
+		if ( self::$execActionFlg === TRUE ) {
+			if ( call_user_func( array( $obj, $this -> actionName ) ) === FALSE ) {
+				echo( 'exec action error!!' );
+				exit;
+			}
+		} else {
+			;
 		}
 		
 		// 後処理
-		if ( call_user_func( array( $obj, 'afterRun' ) ) === FALSE ) {
-			echo( 'exec afterRun error!!' );
-			exit;
+		if ( self::$execAfterRunFlg === TRUE ) {
+			if ( call_user_func( array( $obj, 'afterRun' ) ) === FALSE ) {
+				echo( 'exec afterRun error!!' );
+				exit;
+			} else {
+				;
+			}
 		} else {
 			;
 		}
 		
 		// 終了処理
-		if ( call_user_func( array( $obj, 'terminal' ) ) === FALSE ) {
-			echo( 'exec terminal error!!' );
-			exit;
+		if ( self::$execTerminalFlg === TRUE ) {
+			if ( call_user_func( array( $obj, 'terminal' ) ) === FALSE ) {
+				echo( 'exec terminal error!!' );
+				exit;
+			} else {
+				;
+			}
 		} else {
 			;
 		}
