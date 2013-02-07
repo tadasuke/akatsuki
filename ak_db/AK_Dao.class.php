@@ -87,11 +87,6 @@ class AK_Dao {
 	 */
 	public function exec( $sqlcmd, $bindArray = array() ) {
 		
-		OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'sqlcmd:' . $sqlcmd );
-		foreach ( $bindArray as $data ) {
-			OutputLog::outLog( OutputLog::INFO , __METHOD__, __LINE__, 'data:' . $data[0] . ',' . $data[1] );
-		}
-		
 		// トランザクション開始
 		$this -> startTransaction();
 		
