@@ -90,14 +90,14 @@ class AK_BaseController {
 			if ( $this -> responseType == self::RESPONSE_TYPE_JSON ) {
 				$response = json_encode( $this -> responseParam );
 				header( "X-Content-Type-Options: nosniff" );
-				header( "Content-type: application/json" );
+				header( "Content-type: application/json; charset=UTF-8" );
 				echo( $response );
 			// レスポンスタイプがJSONP形式の場合
 			} else if ( $this -> responseType == self::RESPONSE_TYPE_JSONP ) {
 				$response = json_encode( $this -> responseParam );
 				echo( $this -> callback . '(' . $response . ')' );
 				header( "X-Content-Type-Options: nosniff" );
-				header( "Content-type: application/javascript" );
+				header( "Content-type: application/javascript; charset=UTF-8" );
 			} else {
 				;
 			}
