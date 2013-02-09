@@ -126,10 +126,8 @@ class AK_Dao {
 		
 		// トランザクション処理が開始されていた場合
 		if ( $this -> transactionFlg === TRUE ) {
-			
 			$this -> connection -> commit();
 			$this -> transactionFlg = FALSE;
-			OutputLog::outLog( OutputLog::INFO, __METHOD__, __LINE__, 'COMMIT!!' );
 		} else {
 			;
 		}
