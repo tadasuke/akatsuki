@@ -2,6 +2,7 @@
 
 require_once 'ak_core/AK_BaseController.php';
 
+// 基本クラス
 class AK_Core {
 
 	/**
