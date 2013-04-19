@@ -33,7 +33,7 @@ class AK_Ini {
 	
 	
 	/**
-	 * 設定取得
+	 * 設定返却
 	 * @return Ambigous <boolean, multitype:>
 	 */
 	public static function getConfig() {
@@ -48,6 +48,15 @@ class AK_Ini {
 			}
 		}
 		return $configArray;
+	}
+	
+	
+	/**
+	 * 全設定データ返却
+	 * @return array
+	 */
+	public static function getAllConfig() {
+		return self::$config;
 	}
 	
 }
