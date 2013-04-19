@@ -59,6 +59,14 @@ class AK_Mem extends Memcache{
 	}
 	
 	/**
+	 * インスタンス設定
+	 * @param AK_MemConfig $config
+	 */
+	public static function setInstance( AK_MemConfig $config ) {
+		self::$instance = new self( $config );
+	}
+	
+	/**
 	 * インスタンス取得
 	 * @param AK_MemConfig
 	 * @return AK_Mem
