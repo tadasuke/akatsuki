@@ -51,17 +51,9 @@ class AK_BaseController {
 	private $responseType = self::RESPONSE_TYPE_JSON;
 	protected function setResponseType( $responseType ) {
 		$this -> responseType = $responseType;
-		// レスポンスタイプがJSONPの場合はcallbackを設定
-		if ( $responseType === self::RESPONSE_TYPE_JSONP ) {
-			$callback = $this -> getParam( 'callback' );
-			if ( strlen( $callback ) > 0 ) {
-				$this -> setCallback( $callback );
-			} else {
-				;
-			}
-		} else {
-			;
-		}
+	}
+	protected function getResponseType() {
+		return $this -> responseType;
 	}
 	
 	//---------------------------------- public ----------------------------------
@@ -74,6 +66,14 @@ class AK_BaseController {
 		$this -> getParam  = $_GET;
 		$this -> postParam = $_POST;
 		$this -> userParam = $userParamArray;
+		// callbackパラメータが設定されていた場合
+		$callback = $this -> getParam( 'callback' );
+		if ( strlen( $callback ) > 0 ) {
+			$this -> setResponseType( self::RESPONSE_TYPE_JSONP );
+			$this -> setCallback( $callback );
+		} else {
+			;
+		}
 	}
 	
 	/**
