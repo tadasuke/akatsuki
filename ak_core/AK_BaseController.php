@@ -51,6 +51,17 @@ class AK_BaseController {
 	private $responseType = self::RESPONSE_TYPE_JSON;
 	protected function setResponseType( $responseType ) {
 		$this -> responseType = $responseType;
+		// レスポンスタイプがJSONPの場合はcallbackを設定
+		if ( $responseType === self::RESPONSE_TYPE_JSONP ) {
+			$callback = $this -> getParam( 'callback' );
+			if ( strlen( $callback ) > 0 ) {
+				$this -> setCallback( $callback );
+			} else {
+				;
+			}
+		} else {
+			;
+		}
 	}
 	
 	//---------------------------------- public ----------------------------------
@@ -86,15 +97,14 @@ class AK_BaseController {
 		
 		// レスポンスパラメータが存在した場合
 		if ( count( $this -> responseParam ) > 0 ) {
+			$response = json_encode( $this -> responseParam );
 			// レスポンスタイプがJSON形式の場合
 			if ( $this -> responseType == self::RESPONSE_TYPE_JSON ) {
-				$response = json_encode( $this -> responseParam );
 				header( "X-Content-Type-Options: nosniff" );
 				header( "Content-type: application/json; charset=UTF-8" );
 				echo( $response );
 			// レスポンスタイプがJSONP形式の場合
 			} else if ( $this -> responseType == self::RESPONSE_TYPE_JSONP ) {
-				$response = json_encode( $this -> responseParam );
 				echo( $this -> callback . '(' . $response . ')' );
 				header( "X-Content-Type-Options: nosniff" );
 				header( "Content-type: application/javascript; charset=UTF-8" );
