@@ -2,8 +2,9 @@
 
 class AK_BaseController {
 	
-	const RESPONSE_TYPE_JSON = 1;
+	const RESPONSE_TYPE_JSON  = 1;
 	const RESPONSE_TYPE_JSONP = 2;
+	const RESPONSE_TYPE_IMG   = 3;
 	
 	/**
 	 * GETパラメータ配列
@@ -97,17 +98,23 @@ class AK_BaseController {
 		
 		// レスポンスパラメータが存在した場合
 		if ( count( $this -> responseParam ) > 0 ) {
-			$response = json_encode( $this -> responseParam );
 			// レスポンスタイプがJSON形式の場合
 			if ( $this -> responseType == self::RESPONSE_TYPE_JSON ) {
+				$response = json_encode( $this -> responseParam );
 				header( "X-Content-Type-Options: nosniff" );
 				header( "Content-type: application/json; charset=UTF-8" );
 				echo( $response );
 			// レスポンスタイプがJSONP形式の場合
 			} else if ( $this -> responseType == self::RESPONSE_TYPE_JSONP ) {
-				echo( $this -> callback . '(' . $response . ')' );
+				$response = json_encode( $this -> responseParam );
 				header( "X-Content-Type-Options: nosniff" );
 				header( "Content-type: application/javascript; charset=UTF-8" );
+				echo( $this -> callback . '(' . $response . ')' );
+			// レスポンスタイプがIMGの場合
+			} else if ( $this -> responseType == self::RESPONSE_TYPE_IMG ) {
+				$response = $this -> responseParam[0];
+				header( 'Content-type: image/JPEG' );
+				echo( $response );
 			} else {
 				;
 			}
