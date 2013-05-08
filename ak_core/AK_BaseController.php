@@ -4,7 +4,11 @@ class AK_BaseController {
 	
 	const RESPONSE_TYPE_JSON  = 1;
 	const RESPONSE_TYPE_JSONP = 2;
-	const RESPONSE_TYPE_IMG   = 3;
+	const RESPONSE_TYPE_DATA  = 3;
+	
+	const DEFAULT_JSON_CONTENT_TYPE  = 'Content-type: application/json; charset=UTF-8';
+	const DEFAULT_JSONP_CONTENT_TYPE = 'Content-type: application/javascript; charset=UTF-8';
+	const DEFALUT_DATA_CONTENT_TYPE  = 'Content-type: image/*';
 	
 	/**
 	 * GETパラメータ配列
@@ -57,6 +61,18 @@ class AK_BaseController {
 		return $this -> responseType;
 	}
 	
+	/**
+	 * コンテントタイプ
+	 * @var string
+	 */
+	private $contentType = NULL;
+	protected function setContentType( $contentType ) {
+		$this -> contentType = $contentType;
+	}
+	protected function getContentType() {
+		return $this -> contentType;
+	}
+	
 	//---------------------------------- public ----------------------------------
 	
 	/**
@@ -101,19 +117,22 @@ class AK_BaseController {
 			// レスポンスタイプがJSON形式の場合
 			if ( $this -> responseType == self::RESPONSE_TYPE_JSON ) {
 				$response = json_encode( $this -> responseParam );
-				header( "X-Content-Type-Options: nosniff" );
-				header( "Content-type: application/json; charset=UTF-8" );
+				$contentType = $this -> contentType ?: self::DEFAULT_JSON_CONTENT_TYPE;
+				header( 'X-Content-Type-Options: nosniff' );
+				header( $contentType );
 				echo( $response );
 			// レスポンスタイプがJSONP形式の場合
 			} else if ( $this -> responseType == self::RESPONSE_TYPE_JSONP ) {
 				$response = json_encode( $this -> responseParam );
-				header( "X-Content-Type-Options: nosniff" );
-				header( "Content-type: application/javascript; charset=UTF-8" );
+				$contentType = $this -> contentType ?: self::DEFAULT_JSONP_CONTENT_TYPE;
+				header( 'X-Content-Type-Options: nosniff' );
+				header( $contentType );
 				echo( $this -> callback . '(' . $response . ')' );
-			// レスポンスタイプがIMGの場合
-			} else if ( $this -> responseType == self::RESPONSE_TYPE_IMG ) {
+			// レスポンスタイプがDATAの場合
+			} else if ( $this -> responseType == self::RESPONSE_TYPE_DATA ) {
 				$response = $this -> responseParam[0];
-				header( 'Content-type: image/JPEG' );
+				$contentType = $this -> contentType ?: self::DEFALUT_DATA_CONTENT_TYPE;
+				header( $contentType );
 				echo( $response );
 			} else {
 				;
