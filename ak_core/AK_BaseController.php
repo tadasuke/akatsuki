@@ -84,7 +84,7 @@ class AK_BaseController {
 		$this -> postParam = $_POST;
 		$this -> userParam = $userParamArray;
 		// callbackパラメータが設定されていた場合
-		$callback = $this -> getParam( 'callback' );
+		$callback = $this -> getGetAndPostParam( 'callback' );
 		if ( strlen( $callback ) > 0 ) {
 			$this -> setResponseType( self::RESPONSE_TYPE_JSONP );
 			$this -> setCallback( $callback );
