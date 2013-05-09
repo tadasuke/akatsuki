@@ -184,7 +184,7 @@ class AK_BaseController {
 	 * @param string $key
 	 * @return string
 	 */
-	protected function getParam( $key ) {
+	protected function getGetAndPostParam( $key ) {
 		$value = $this -> getGetParam( $key );
 		$value = $value ?: $this -> getPostParam( $key );
 		return $value;
