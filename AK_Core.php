@@ -102,6 +102,8 @@ class AK_Core {
 		
 		// コントローラオブジェクト作成
 		$obj = new $this -> controllerName;
+		$obj -> setControllerName( $this -> controllerName );
+		$obj -> setActionName( $this -> actionName );
 		
 		// 初期処理
 		if ( call_user_func( array( $obj, 'initial' ), $this -> userParamArray ) === FALSE ) {

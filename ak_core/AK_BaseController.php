@@ -11,6 +11,30 @@ class AK_BaseController {
 	const DEFALUT_DATA_CONTENT_TYPE  = 'Content-type: image/*';
 	
 	/**
+	 * コントローラ名
+	 * @var string
+	 */
+	private $controllerName = NULL;
+	public function setControllerName( $controllerName ) {
+		$this -> controllerName = $controllerName;
+	}
+	public function getControllerName() {
+		return $this -> controllerName;
+	}
+	
+	/**
+	 * アクション名
+	 * @var string
+	 */
+	private $actionName = NULL;
+	public function setActionName( $actionName ) {
+		$this -> actionName = $actionName;
+	}
+	public function getActionName() {
+		return $this -> actionName;
+	}
+	
+	/**
 	 * GETパラメータ配列
 	 * @var array
 	 */
