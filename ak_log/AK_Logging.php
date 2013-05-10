@@ -19,7 +19,7 @@ class AK_Logging extends AK_Log {
 	 * @var string
 	 */
 	private $processId = NULL;
-	public function getProsessId() {
+	public function getProcessId() {
 		return $this -> processId;
 	}
 	
