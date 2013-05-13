@@ -9,6 +9,7 @@ require_once 'ak_mem/AK_MemConfig.php';
 class AK_Mem extends Memcache{
 	
 	const DEFAULT_PORT = 11211;
+	const DEFAULT_KEEP_TIME = 0;
 	
 	const GET_TYPE_VARIABLE = 1;
 	const GET_TYPE_MEMCACHE = 2;
@@ -38,6 +39,18 @@ class AK_Mem extends Memcache{
 	}
 	
 	/**
+	 * デフォルト保持秒数
+	 * @var int
+	 */
+	private static $defaultKeepTime = self::DEFAULT_KEEP_TIME;
+	public static function setDefaultKeepTime( $defaultKeepTime ) {
+		self::$defaultKeepTime = $defaultKeepTime;
+	}
+	public static function getDefaultKeepTime() {
+		return self::$defaultKeepTime;
+	}
+	
+	/**
 	 * インスタンス
 	 * @var AK_Mem
 	 */
@@ -60,18 +73,18 @@ class AK_Mem extends Memcache{
 	
 	/**
 	 * インスタンス設定
-	 * @param AK_MemConfig $config
+	 * @param mixed $config
 	 */
-	public static function setInstance( AK_MemConfig $config ) {
+	public static function setInstance( $config ) {
 		self::$instance = new self( $config );
 	}
 	
 	/**
 	 * インスタンス取得
-	 * @param AK_MemConfig
+	 * @param mixed
 	 * @return AK_Mem
 	 */
-	public static function getInstance( AK_MemConfig $config = NULL ) {
+	public static function getInstance( $config = NULL ) {
 		if ( is_null( self::$instance ) === TRUE ) {
 			self::$instance = new self( $config );
 		} else {
@@ -84,11 +97,11 @@ class AK_Mem extends Memcache{
 	
 	/**
 	 * コンストラクタ
-	 * @param AK_MemConfig
+	 * @param mixed
 	 */
-	private function __construct( AK_MemConfig $akMemConfig = NULL ) {
+	private function __construct( $akMemConfig = NULL ) {
 		if ( is_null( $akMemConfig ) === FALSE ) {
-			$this -> addServer( $akMemConfig );
+			$this -> _addServer( $akMemConfig );
 		} else {
 			;
 		}
@@ -116,8 +129,14 @@ class AK_Mem extends Memcache{
 	 * @param mixed $value
 	 * @param int $keepTime
 	 */
-	public function set( $key, $value, $keepTime = 0 ) {
-		//parent::set( $key, $value, 0, 0 );
+	public function set( $key, $value, $keepTime = NULL ) {
+		$keepTime = $keepTime ?: self::$defaultKeepTime;
+		
+		/*
+		echo( 'keep_time:' . $keepTime );
+		exit;
+		*/
+		
 		$this -> valueArray[$key] = array(
 			  'value'       => $value
 			, 'keep_time'   => $keepTime
@@ -167,7 +186,7 @@ class AK_Mem extends Memcache{
 	 * 接続先追加
 	 * @param mixed
 	 */
-	public function addServer( $akMemConfigArray ) {
+	public function _addServer( $akMemConfigArray ) {
 	
 		if ( is_array( $akMemConfigArray ) === FALSE ) {
 			$akMemConfigArray = array( $akMemConfigArray );
@@ -187,8 +206,9 @@ class AK_Mem extends Memcache{
 	 */
 	public function commit() {
 		foreach ( $this -> valueArray as $key => $data ) {
+			
 			if ( $data['set_mem_flg'] === TRUE ) {
-				parent::set( $key, $data['value'], $data['keep_time'], self::$compressedFlg );
+				parent::set( $key, $data['value'], self::$compressedFlg, $data['keep_time'] );
 			} else {
 				;
 			}
