@@ -1,6 +1,6 @@
 <?php
 
-class AK_Ini {
+class AK_Config {
 	
 	/**
 	 * 設定配列

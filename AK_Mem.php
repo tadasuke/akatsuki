@@ -132,11 +132,6 @@ class AK_Mem extends Memcache{
 	public function set( $key, $value, $keepTime = NULL ) {
 		$keepTime = $keepTime ?: self::$defaultKeepTime;
 		
-		/*
-		echo( 'keep_time:' . $keepTime );
-		exit;
-		*/
-		
 		$this -> valueArray[$key] = array(
 			  'value'       => $value
 			, 'keep_time'   => $keepTime
