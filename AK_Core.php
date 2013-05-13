@@ -71,6 +71,15 @@ class AK_Core {
 	}
 	
 	/**
+	 * リクエストオブジェクト
+	 * @var AK_BaseController
+	 */
+	private $requestObj = NULL;
+	public function getRequestObj() {
+		return $this -> requestObj;
+	}
+	
+	/**
 	 * インスタンス取得
 	 * @return AK_core
 	 */
@@ -101,12 +110,12 @@ class AK_Core {
 		require_once $this -> controllerDir . '/' . $this -> controllerName . '.php';
 		
 		// コントローラオブジェクト作成
-		$obj = new $this -> controllerName;
-		$obj -> setControllerName( $this -> controllerName );
-		$obj -> setActionName( $this -> actionName );
+		$this -> requestObj = new $this -> controllerName;
+		$this -> requestObj -> setControllerName( $this -> controllerName );
+		$this -> requestObj -> setActionName( $this -> actionName );
 		
 		// 初期処理
-		if ( call_user_func( array( $obj, 'initial' ), $this -> userParamArray ) === FALSE ) {
+		if ( call_user_func( array( $this -> requestObj, 'initial' ), $this -> userParamArray ) === FALSE ) {
 			echo( 'exec beforeRun error!!' );
 			exit;
 		} else {
@@ -114,7 +123,7 @@ class AK_Core {
 		}
 		
 		// 前処理
-		if ( call_user_func( array( $obj, 'beforeRun' ) ) === FALSE ) {
+		if ( call_user_func( array( $this -> requestObj, 'beforeRun' ) ) === FALSE ) {
 			echo( 'exec beforeRun error!!' );
 			exit;
 		} else {
@@ -123,7 +132,7 @@ class AK_Core {
 		
 		// 処理実行
 		if ( self::$execActionFlg === TRUE ) {
-			if ( call_user_func( array( $obj, $this -> actionName ) ) === FALSE ) {
+			if ( call_user_func( array( $this -> requestObj, $this -> actionName ) ) === FALSE ) {
 				echo( 'exec action error!!' );
 				exit;
 			}
@@ -133,7 +142,7 @@ class AK_Core {
 		
 		// 後処理
 		if ( self::$execAfterRunFlg === TRUE ) {
-			if ( call_user_func( array( $obj, 'afterRun' ) ) === FALSE ) {
+			if ( call_user_func( array( $this -> requestObj, 'afterRun' ) ) === FALSE ) {
 				echo( 'exec afterRun error!!' );
 				exit;
 			} else {
@@ -145,7 +154,7 @@ class AK_Core {
 		
 		// 終了処理
 		if ( self::$execTerminalFlg === TRUE ) {
-			if ( call_user_func( array( $obj, 'terminal' ) ) === FALSE ) {
+			if ( call_user_func( array( $this -> requestObj, 'terminal' ) ) === FALSE ) {
 				echo( 'exec terminal error!!' );
 				exit;
 			} else {
