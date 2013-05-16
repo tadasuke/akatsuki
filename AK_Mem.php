@@ -44,12 +44,12 @@ class AK_Mem extends Memcache{
 	 * デフォルト保持秒数
 	 * @var int
 	 */
-	private static $defaultKeepTime = self::DEFAULT_KEEP_TIME;
-	public static function setDefaultKeepTime( $defaultKeepTime ) {
-		self::$defaultKeepTime = $defaultKeepTime;
+	private $defaultKeepTime = self::DEFAULT_KEEP_TIME;
+	public function setDefaultKeepTime( $defaultKeepTime ) {
+		$this -> defaultKeepTime = $defaultKeepTime;
 	}
-	public static function getDefaultKeepTime() {
-		return self::$defaultKeepTime;
+	public function getDefaultKeepTime() {
+		return $this -> defaultKeepTime;
 	}
 	
 	/**
@@ -76,9 +76,10 @@ class AK_Mem extends Memcache{
 	/**
 	 * インスタンス設定
 	 * @param mixed $config
+	 * @return AK_Mem
 	 */
 	public static function setInstance( $config, $identificationName = self::DEFAULT_MEM_IDENTIFICATION_NAME ) {
-		self::$instanceArray[$identificationName] = new self( $identificationName, $config );
+		return self::$instanceArray[$identificationName] = new self( $identificationName, $config );
 	}
 	
 	/**
