@@ -57,6 +57,9 @@ class AK_Mem extends Memcache{
 	 * @var array[AK_Mem]
 	 */
 	private static $instanceArray = array();
+	public static function getInstanceArray() {
+		return self::$instanceArray;
+	}
 	
 	/**
 	 * 値配列
@@ -124,7 +127,7 @@ class AK_Mem extends Memcache{
 	 * @param int $keepTime
 	 */
 	public function set( $key, $value, $keepTime = NULL ) {
-		$keepTime = $keepTime ?: self::$defaultKeepTime;
+		$keepTime = $keepTime ?: $this -> defaultKeepTime;
 		
 		$this -> valueArray[$key] = array(
 			  'value'       => $value
