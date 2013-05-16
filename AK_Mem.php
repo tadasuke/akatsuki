@@ -14,6 +14,8 @@ class AK_Mem extends Memcache{
 	const GET_TYPE_VARIABLE = 1;
 	const GET_TYPE_MEMCACHE = 2;
 	
+	const DEFAULT_MEM_IDENTIFICATION_NAME = 'ak_mem';
+	
 	/**
 	 * 圧縮フラグ
 	 * @var int
@@ -51,10 +53,10 @@ class AK_Mem extends Memcache{
 	}
 	
 	/**
-	 * インスタンス
-	 * @var AK_Mem
+	 * インスタンス配列
+	 * @var array[AK_Mem]
 	 */
-	private static $instance = NULL;
+	private static $instanceArray = array();
 	
 	/**
 	 * 値配列
@@ -75,8 +77,8 @@ class AK_Mem extends Memcache{
 	 * インスタンス設定
 	 * @param mixed $config
 	 */
-	public static function setInstance( $config ) {
-		self::$instance = new self( $config );
+	public static function setInstance( $config, $identificationName = self::DEFAULT_MEM_IDENTIFICATION_NAME ) {
+		self::$instanceArray[$identificationName] = new self( $identificationName, $config );
 	}
 	
 	/**
@@ -84,13 +86,8 @@ class AK_Mem extends Memcache{
 	 * @param mixed
 	 * @return AK_Mem
 	 */
-	public static function getInstance( $config = NULL ) {
-		if ( is_null( self::$instance ) === TRUE ) {
-			self::$instance = new self( $config );
-		} else {
-			;
-		}
-		return self::$instance;
+	public static function getInstance( $identificationName = self::DEFAULT_MEM_IDENTIFICATION_NAME ) {
+		return self::$instanceArray[$identificationName];
 	}
 	
 	//-------------------------- コンストラクタ -----------------------------
@@ -99,12 +96,8 @@ class AK_Mem extends Memcache{
 	 * コンストラクタ
 	 * @param mixed
 	 */
-	private function __construct( $akMemConfig = NULL ) {
-		if ( is_null( $akMemConfig ) === FALSE ) {
-			$this -> _addServer( $akMemConfig );
-		} else {
-			;
-		}
+	private function __construct( $identificationName, $akMemConfig ) {
+		$this -> _addServer( $identificationName, $akMemConfig );
 	}
 	
 	//---------------------------- デストラクタ ------------------------------
@@ -181,7 +174,7 @@ class AK_Mem extends Memcache{
 	 * 接続先追加
 	 * @param mixed
 	 */
-	public function _addServer( $akMemConfigArray ) {
+	public function _addServer( $identificationName, $akMemConfigArray ) {
 	
 		if ( is_array( $akMemConfigArray ) === FALSE ) {
 			$akMemConfigArray = array( $akMemConfigArray );
