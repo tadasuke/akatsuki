@@ -42,4 +42,22 @@ class AK_Gadget {
 		unset( $tmpArray );
 	}
 	
+	/**
+	 * 配列ランダム抽出
+	 * @param array $array
+	 * @return string $key
+	 */
+	public static function selectedArray( array $array ) {
+		
+		$randArray = array();
+		foreach ( $array as $key => $value ) {
+			for ( $i = 0; $i < $value; $i++ ) {
+				$randArray[] = $key;
+			}
+		}
+		
+		return $randArray[array_rand( $randArray) ];
+		
+	}
+	
 }
