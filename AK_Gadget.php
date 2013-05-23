@@ -56,8 +56,17 @@ class AK_Gadget {
 			}
 		}
 		
-		return $randArray[array_rand( $randArray) ];
+		return $randArray[array_rand( $randArray ) ];
 		
 	}
 	
+	/**
+	 * n-nの形式の文字列から、最大値、最小値の配列を作成する
+	 * @param string $numWord
+	 * @return int
+	 */
+	public static function getRandamNum( $numWord ) {
+		list( $min, $max) = explode( '-', $numWord );
+		return rand( $min, $max );
+	}
 }
