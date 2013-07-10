@@ -170,7 +170,6 @@ class AK_Dao {
 	// ------------------------------ private ---------------------------------------
 	
 	
-	
 	/**
 	 * DB接続
 	 */
@@ -181,7 +180,7 @@ class AK_Dao {
 			, $this -> password
 			, array(
 				  PDO::ATTR_PERSISTENT         => FALSE
-				, PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET `utf8`"
+				//, PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET `utf8`"
 			)
 		);
 		$this -> connection -> setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
