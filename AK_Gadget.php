@@ -9,7 +9,8 @@ class AK_Gadget {
 	 */
 	public static function dateFormat( $date, $format = 'YmdHis' ) {
 		
-		return date( $format, strtotime( $date ) );
+		$time = strtotime( $date );
+		return ($time === FALSE) ? NULL : date( $format, $time );
 		
 	}
 	
