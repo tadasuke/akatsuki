@@ -77,6 +77,15 @@ class AK_Mem extends Memcache{
 	}
 	
 	/**
+	 * Memcache識別子
+	 * @var string
+	 */
+	private $identificationName = NULL;
+	public function getIdentificationName() {
+		return $this -> identificationName;
+	}
+	
+	/**
 	 * インスタンス設定
 	 * @param mixed $config
 	 * @return AK_Mem
@@ -101,7 +110,8 @@ class AK_Mem extends Memcache{
 	 * @param mixed
 	 */
 	private function __construct( $identificationName, $akMemConfig ) {
-		$this -> _addServer( $identificationName, $akMemConfig );
+		$this -> identificationName = $identificationName;
+		$this -> _addServer( $akMemConfig );
 	}
 	
 	//---------------------------- デストラクタ ------------------------------
@@ -178,7 +188,7 @@ class AK_Mem extends Memcache{
 	 * 接続先追加
 	 * @param mixed
 	 */
-	public function _addServer( $identificationName, $akMemConfigArray ) {
+	public function _addServer( $akMemConfigArray ) {
 	
 		if ( is_array( $akMemConfigArray ) === FALSE ) {
 			$akMemConfigArray = array( $akMemConfigArray );
