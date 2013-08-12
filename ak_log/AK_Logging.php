@@ -15,6 +15,18 @@ class AK_Logging extends AK_Log {
 	private $outLogLevel = NULL;
 	
 	/**
+	 * ログヘッダ
+	 * @var string
+	 */
+	private $logHeader = NULL;
+	public function setLogHeader( $logHeader ) {
+		$this -> logHeader = $logHeader;
+	}
+	public function getLogHeader() {
+		return $this -> logHeader;
+	}
+	
+	/**
 	 * プロセスID
 	 * @var string
 	 */
@@ -65,7 +77,7 @@ class AK_Logging extends AK_Log {
 	private function makeLogMessage( $logLevel, $method, $line, $message ) {
 		
 		$date = date( 'H:i:s' );
-		$logString = $this -> processId . "\t" . $date . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
+		$logString = $this -> processId . "\t" . $date . "\t" . $this -> logHeader . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
 		return $logString;
 	}
 	

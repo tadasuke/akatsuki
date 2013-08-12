@@ -154,6 +154,7 @@ class AK_Mem extends Memcache{
 	public function get( $key ) {
 		if ( isset( $this -> valueArray[$key] ) === FALSE ) {
 			$value = parent::get( $key );
+			
 			$this -> valueArray[$key] = array(
 				  'value'       => $value
 				, 'keep_time'   => 0
@@ -207,10 +208,11 @@ class AK_Mem extends Memcache{
 	 * コミット
 	 */
 	public function commit() {
+		
 		foreach ( $this -> valueArray as $key => $data ) {
 			
 			if ( $data['set_mem_flg'] === TRUE ) {
-				parent::set( $key, $data['value'], self::$compressedFlg, $data['keep_time'] );
+				$result = parent::set( $key, $data['value'], self::$compressedFlg, $data['keep_time'] );
 			} else {
 				;
 			}
