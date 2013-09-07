@@ -9,6 +9,12 @@ class AK_Logging extends AK_Log {
 	private $logFileName = NULL;
 	
 	/**
+	 * エラーログファイル名
+	 * @var string
+	 */
+	private $errorLogFileName = NULL;
+	
+	/**
 	 * 出力ログレベル
 	 * @var int
 	 */
@@ -27,6 +33,25 @@ class AK_Logging extends AK_Log {
 	}
 	
 	/**
+	 * エラーログ出力フラグ
+	 * @var boolean
+	 */
+	private $outputErrorLogFlg = TRUE;
+	public function setOutputErrorLogFlg( $outputErrorLogFlg ) {
+		$this -> outputErrorLogFlg = $outputErrorLogFlg;
+	}
+	
+	/**
+	 * エラーログレベル
+	 * @var int
+	 */
+	private $errorLogLevel = self::NOTICE;
+	public function setErrorLogLevel( $errorLogLevel ) {
+		$this -> errorLogLevel = $errorLogLevel;
+	}
+	
+	
+	/**
 	 * プロセスID
 	 * @var string
 	 */
@@ -39,6 +64,7 @@ class AK_Logging extends AK_Log {
 	
 	protected function __construct( $logFileName, $outLogLevel ) {
 		$this -> logFileName = $logFileName;
+		$this -> errorLogFileName = $logFileName . '.error';
 		$this -> outLogLevel = $outLogLevel;
 		// プロセスID設定
 		$this -> processId = substr( sha1( microtime( TRUE ) . rand() ), 0, 8 );
@@ -63,6 +89,15 @@ class AK_Logging extends AK_Log {
 		$FP = fopen( $this -> logFileName, 'a' );
 		fwrite( $FP, $logString . PHP_EOL );
 		fclose( $FP );
+		
+		// エラーログ対応
+		if ( $this -> outputErrorLogFlg === TRUE && $logLevel <= $this -> errorLogLevel ) {
+			$FP = fopen( $this -> errorLogFileName, 'a' );
+			fwrite( $FP, $logString . PHP_EOL );
+			fclose( $FP );
+		} else {
+			;
+		}
 		
 	}
 	
