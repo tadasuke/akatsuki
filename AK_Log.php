@@ -23,13 +23,13 @@ class AK_Log {
 	 * ログ出力クラス設定
 	 * @param string $baseDir
 	 * @param int $outLogLevel
-	 * @return boolean
+	 * @param string $headerLogFileName
 	 */
-	public static function setAkLoggingClass( $baseDir, $outLogLevel ) {
+	public static function setAkLoggingClass( $baseDir, $outLogLevel, $headerLogFileName = NULL ) {
 		
 		$now = time();
 		$baseDir .= '/' . date( 'Ym', $now );
-		$logFileName = date( 'Ymd', $now ) . '.log';
+		$logFileName = $headerLogFileName . date( 'Ymd', $now ) . '.log';
 		self::setting( $baseDir );
 		
 		self::$akLoggingClass = new AK_Logging( $baseDir . '/' . $logFileName, $outLogLevel );

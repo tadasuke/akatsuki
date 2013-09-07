@@ -30,8 +30,8 @@ class AK_MemConfig {
 	 * @param int $port
 	 */
 	public function __construct( $hostName, $port = AK_Mem::DEFAULT_PORT ) {
-		$this -> hostName = $hostName;
-		$this -> port     = $port;
+		$this -> hostName        = $hostName;
+		$this -> port            = $port;
 	}
 	
 }

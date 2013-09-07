@@ -3,60 +3,20 @@
 class AK_Ini {
 	
 	/**
-	 * 設定配列
-	 * @var array
+	 * 設定をマージする
+	 * @param array $fromArray
+	 * @param array $toArray
 	 */
-	public static $config = array();
+	protected function mergeConfig( array &$fromArray, array &$toArray ) {
 	
-	
-	/**
-	 * 設定
-	 * @param string $key
-	 * @param mixed $value
-	 */
-	public static function setConfig( $key, $value ) {
-		
-		self::$config[$key] = $value;
-		
-	}
-	
-	
-	/**
-	 * 配列から設定
-	 * @param array $configArray
-	 */
-	public static function setConfigFromArray( array $configArray ) {
-		foreach ( $configArray as $key => $value ) {
-			self::setConfig( $key, $value );
-		}
-	}
-	
-	
-	/**
-	 * 設定返却
-	 * @return Ambigous <boolean, multitype:>
-	 */
-	public static function getConfig() {
-		$keyArray = func_get_args();
-		$configArray = self::$config;
-		foreach ( $keyArray as $key ) {
-			if ( array_key_exists( $key, $configArray ) === TRUE ) {
-				$configArray = $configArray[$key];
+		foreach ( $fromArray as $key => $value ) {
+			if ( is_array( $fromArray[$key] ) === TRUE ) {
+				$this -> mergeConfig( $fromArray[$key], $toArray[$key] );
 			} else {
-				$configArray = FALSE;
-				break;
+				$toArray[$key] = $fromArray[$key];
 			}
 		}
-		return $configArray;
-	}
 	
-	
-	/**
-	 * 全設定データ返却
-	 * @return array
-	 */
-	public static function getAllConfig() {
-		return self::$config;
 	}
 	
 }

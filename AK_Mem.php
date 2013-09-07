@@ -9,9 +9,12 @@ require_once 'ak_mem/AK_MemConfig.php';
 class AK_Mem extends Memcache{
 	
 	const DEFAULT_PORT = 11211;
+	const DEFAULT_KEEP_TIME = 0;
 	
 	const GET_TYPE_VARIABLE = 1;
 	const GET_TYPE_MEMCACHE = 2;
+	
+	const DEFAULT_MEM_IDENTIFICATION_NAME = 'ak_mem';
 	
 	/**
 	 * 圧縮フラグ
@@ -38,10 +41,25 @@ class AK_Mem extends Memcache{
 	}
 	
 	/**
-	 * インスタンス
-	 * @var AK_Mem
+	 * デフォルト保持秒数
+	 * @var int
 	 */
-	private static $instance = NULL;
+	private $defaultKeepTime = self::DEFAULT_KEEP_TIME;
+	public function setDefaultKeepTime( $defaultKeepTime ) {
+		$this -> defaultKeepTime = $defaultKeepTime;
+	}
+	public function getDefaultKeepTime() {
+		return $this -> defaultKeepTime;
+	}
+	
+	/**
+	 * インスタンス配列
+	 * @var array[AK_Mem]
+	 */
+	private static $instanceArray = array();
+	public static function getInstanceArray() {
+		return self::$instanceArray;
+	}
 	
 	/**
 	 * 値配列
@@ -59,39 +77,41 @@ class AK_Mem extends Memcache{
 	}
 	
 	/**
-	 * インスタンス設定
-	 * @param AK_MemConfig $config
+	 * Memcache識別子
+	 * @var string
 	 */
-	public static function setInstance( AK_MemConfig $config ) {
-		self::$instance = new self( $config );
+	private $identificationName = NULL;
+	public function getIdentificationName() {
+		return $this -> identificationName;
+	}
+	
+	/**
+	 * インスタンス設定
+	 * @param mixed $config
+	 * @return AK_Mem
+	 */
+	public static function setInstance( $config, $identificationName = self::DEFAULT_MEM_IDENTIFICATION_NAME ) {
+		return self::$instanceArray[$identificationName] = new self( $identificationName, $config );
 	}
 	
 	/**
 	 * インスタンス取得
-	 * @param AK_MemConfig
+	 * @param mixed
 	 * @return AK_Mem
 	 */
-	public static function getInstance( AK_MemConfig $config = NULL ) {
-		if ( is_null( self::$instance ) === TRUE ) {
-			self::$instance = new self( $config );
-		} else {
-			;
-		}
-		return self::$instance;
+	public static function getInstance( $identificationName = self::DEFAULT_MEM_IDENTIFICATION_NAME ) {
+		return self::$instanceArray[$identificationName];
 	}
 	
 	//-------------------------- コンストラクタ -----------------------------
 	
 	/**
 	 * コンストラクタ
-	 * @param AK_MemConfig
+	 * @param mixed
 	 */
-	private function __construct( AK_MemConfig $akMemConfig = NULL ) {
-		if ( is_null( $akMemConfig ) === FALSE ) {
-			$this -> addServer( $akMemConfig );
-		} else {
-			;
-		}
+	private function __construct( $identificationName, $akMemConfig ) {
+		$this -> identificationName = $identificationName;
+		$this -> _addServer( $akMemConfig );
 	}
 	
 	//---------------------------- デストラクタ ------------------------------
@@ -116,8 +136,9 @@ class AK_Mem extends Memcache{
 	 * @param mixed $value
 	 * @param int $keepTime
 	 */
-	public function set( $key, $value, $keepTime = 0 ) {
-		//parent::set( $key, $value, 0, 0 );
+	public function set( $key, $value, $keepTime = NULL ) {
+		$keepTime = $keepTime ?: $this -> defaultKeepTime;
+		
 		$this -> valueArray[$key] = array(
 			  'value'       => $value
 			, 'keep_time'   => $keepTime
@@ -133,6 +154,7 @@ class AK_Mem extends Memcache{
 	public function get( $key ) {
 		if ( isset( $this -> valueArray[$key] ) === FALSE ) {
 			$value = parent::get( $key );
+			
 			$this -> valueArray[$key] = array(
 				  'value'       => $value
 				, 'keep_time'   => 0
@@ -167,7 +189,7 @@ class AK_Mem extends Memcache{
 	 * 接続先追加
 	 * @param mixed
 	 */
-	public function addServer( $akMemConfigArray ) {
+	public function _addServer( $akMemConfigArray ) {
 	
 		if ( is_array( $akMemConfigArray ) === FALSE ) {
 			$akMemConfigArray = array( $akMemConfigArray );
@@ -186,9 +208,11 @@ class AK_Mem extends Memcache{
 	 * コミット
 	 */
 	public function commit() {
+		
 		foreach ( $this -> valueArray as $key => $data ) {
+			
 			if ( $data['set_mem_flg'] === TRUE ) {
-				parent::set( $key, $data['value'], $data['keep_time'], self::$compressedFlg );
+				$result = parent::set( $key, $data['value'], self::$compressedFlg, $data['keep_time'] );
 			} else {
 				;
 			}

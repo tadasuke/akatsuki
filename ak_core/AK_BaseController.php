@@ -97,6 +97,18 @@ class AK_BaseController {
 		return $this -> contentType;
 	}
 	
+	/**
+	 * レスポンス返却フラグ
+	 * @var boolean
+	 */
+	private $responseFlg = TRUE;
+	protected function setResponseFlg( $responseFlg ) {
+		$this -> responseFlg = $responseFlg;
+	}
+	protected function getResponseFlg() {
+		return $this -> responseFlg;
+	}
+	
 	//---------------------------------- public ----------------------------------
 	
 	/**
@@ -136,31 +148,37 @@ class AK_BaseController {
 	 */
 	final public function terminal() {
 		
-		// レスポンスパラメータが存在した場合
-		if ( count( $this -> responseParam ) > 0 ) {
-			// レスポンスタイプがJSON形式の場合
-			if ( $this -> responseType == self::RESPONSE_TYPE_JSON ) {
-				$response = json_encode( $this -> responseParam );
-				$contentType = $this -> contentType ?: self::DEFAULT_JSON_CONTENT_TYPE;
-				header( 'X-Content-Type-Options: nosniff' );
-				header( $contentType );
-				echo( $response );
-			// レスポンスタイプがJSONP形式の場合
-			} else if ( $this -> responseType == self::RESPONSE_TYPE_JSONP ) {
-				$response = json_encode( $this -> responseParam );
-				$contentType = $this -> contentType ?: self::DEFAULT_JSONP_CONTENT_TYPE;
-				header( 'X-Content-Type-Options: nosniff' );
-				header( $contentType );
-				echo( $this -> callback . '(' . $response . ')' );
-			// レスポンスタイプがDATAの場合
-			} else if ( $this -> responseType == self::RESPONSE_TYPE_DATA ) {
-				$response = $this -> responseParam[0];
-				$contentType = $this -> contentType ?: self::DEFALUT_DATA_CONTENT_TYPE;
-				header( $contentType );
-				echo( $response );
+		if ( $this -> responseFlg === TRUE ) {
+		
+			// レスポンスパラメータが存在した場合
+			if ( count( $this -> responseParam ) > 0 ) {
+				// レスポンスタイプがJSON形式の場合
+				if ( $this -> responseType == self::RESPONSE_TYPE_JSON ) {
+					$response = json_encode( $this -> responseParam );
+					$contentType = $this -> contentType ?: self::DEFAULT_JSON_CONTENT_TYPE;
+					header( 'X-Content-Type-Options: nosniff' );
+					header( $contentType );
+					echo( $response );
+				// レスポンスタイプがJSONP形式の場合
+				} else if ( $this -> responseType == self::RESPONSE_TYPE_JSONP ) {
+					$response = json_encode( $this -> responseParam );
+					$contentType = $this -> contentType ?: self::DEFAULT_JSONP_CONTENT_TYPE;
+					header( 'X-Content-Type-Options: nosniff' );
+					header( $contentType );
+					echo( $this -> callback . '(' . $response . ')' );
+				// レスポンスタイプがDATAの場合
+				} else if ( $this -> responseType == self::RESPONSE_TYPE_DATA ) {
+					$response = $this -> responseParam[0];
+					$contentType = $this -> contentType ?: self::DEFALUT_DATA_CONTENT_TYPE;
+					header( $contentType );
+					echo( $response );
+				} else {
+					;
+				}
 			} else {
 				;
 			}
+			
 		} else {
 			;
 		}
