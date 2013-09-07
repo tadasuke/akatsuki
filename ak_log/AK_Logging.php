@@ -9,10 +9,47 @@ class AK_Logging extends AK_Log {
 	private $logFileName = NULL;
 	
 	/**
+	 * エラーログファイル名
+	 * @var string
+	 */
+	private $errorLogFileName = NULL;
+	
+	/**
 	 * 出力ログレベル
 	 * @var int
 	 */
 	private $outLogLevel = NULL;
+	
+	/**
+	 * ログヘッダ
+	 * @var string
+	 */
+	private $logHeader = NULL;
+	public function setLogHeader( $logHeader ) {
+		$this -> logHeader = $logHeader;
+	}
+	public function getLogHeader() {
+		return $this -> logHeader;
+	}
+	
+	/**
+	 * エラーログ出力フラグ
+	 * @var boolean
+	 */
+	private $outputErrorLogFlg = TRUE;
+	public function setOutputErrorLogFlg( $outputErrorLogFlg ) {
+		$this -> outputErrorLogFlg = $outputErrorLogFlg;
+	}
+	
+	/**
+	 * エラーログレベル
+	 * @var int
+	 */
+	private $errorLogLevel = self::NOTICE;
+	public function setErrorLogLevel( $errorLogLevel ) {
+		$this -> errorLogLevel = $errorLogLevel;
+	}
+	
 	
 	/**
 	 * プロセスID
@@ -27,6 +64,7 @@ class AK_Logging extends AK_Log {
 	
 	protected function __construct( $logFileName, $outLogLevel ) {
 		$this -> logFileName = $logFileName;
+		$this -> errorLogFileName = $logFileName . '.error';
 		$this -> outLogLevel = $outLogLevel;
 		// プロセスID設定
 		$this -> processId = substr( sha1( microtime( TRUE ) . rand() ), 0, 8 );
@@ -52,6 +90,15 @@ class AK_Logging extends AK_Log {
 		fwrite( $FP, $logString . PHP_EOL );
 		fclose( $FP );
 		
+		// エラーログ対応
+		if ( $this -> outputErrorLogFlg === TRUE && $logLevel <= $this -> errorLogLevel ) {
+			$FP = fopen( $this -> errorLogFileName, 'a' );
+			fwrite( $FP, $logString . PHP_EOL );
+			fclose( $FP );
+		} else {
+			;
+		}
+		
 	}
 	
 	//-------------------------- private --------------------------------
@@ -65,7 +112,7 @@ class AK_Logging extends AK_Log {
 	private function makeLogMessage( $logLevel, $method, $line, $message ) {
 		
 		$date = date( 'H:i:s' );
-		$logString = $this -> processId . "\t" . $date . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
+		$logString = $this -> processId . "\t" . $date . "\t" . $this -> logHeader . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
 		return $logString;
 	}
 	
