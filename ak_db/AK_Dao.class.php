@@ -83,12 +83,17 @@ class AK_Dao {
 	 * 更新処理実行
 	 * @param string $sqlcmd
 	 * @param array $bindArray
+	 * @param boolean $startTransactionFlg
 	 * @return int $returnValue
 	 */
-	public function exec( $sqlcmd, $bindArray = array() ) {
+	public function exec( $sqlcmd, $bindArray = array(), $startTransactionFlg = TRUE ) {
 		
 		// トランザクション開始
-		$this -> startTransaction();
+		if ( $startTransactionFlg === TRUE ) {
+			$this -> startTransaction();
+		} else {
+			;
+		}
 		
 		$sth = $this -> connection -> prepare( $sqlcmd );
 		$i = 1;

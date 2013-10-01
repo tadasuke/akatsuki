@@ -83,10 +83,10 @@ abstract class AK_Db{
 	 * 更新
 	 * @return int $returnValue
 	 */
-	public function exec() {
+	public function exec( $startTransactionFlg = TRUE ) {
 		
 		$dao = AK_DaoFactory::getDao( $this -> dbIdemtificationName );
-		$returnValue = $dao -> exec( $this -> sqlcmd, $this -> bindArray );
+		$returnValue = $dao -> exec( $this -> sqlcmd, $this -> bindArray, $startTransactionFlg );
 		
 		return $returnValue;
 	}
