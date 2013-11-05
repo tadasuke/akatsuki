@@ -153,7 +153,14 @@ class AK_Mem extends Memcache{
 	 */
 	public function get( $key ) {
 		if ( isset( $this -> valueArray[$key] ) === FALSE ) {
-			$value = parent::get( $key );
+			
+			try {
+				$value = parent::get( $key );
+			}
+			catch ( Exception $e ) {
+				AK_Log::getLogClass() -> log( AK_Log::ALERT, __METHOD__, __LINE__, 'memcache_connect_error!!' );
+				return FALSE;
+			}
 			
 			$this -> valueArray[$key] = array(
 				  'value'       => $value
