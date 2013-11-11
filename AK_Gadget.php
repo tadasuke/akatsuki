@@ -131,4 +131,21 @@ class AK_Gadget {
 		return $areaArray[$areaCode];
 	
 	}
+	
+	
+	/**
+	 * NULLを空文字にする
+	 * @param mixed $obj
+	 */
+	public static function nullToString( &$obj ) {
+		
+		if ( is_array( $obj ) === FALSE ) {
+			$obj = (is_null( $obj )) ? '' : $obj;
+		} else {
+			foreach ( $obj as &$value ) {
+				self::nullToString( $value );
+			}
+		}
+		
+	}
 }
