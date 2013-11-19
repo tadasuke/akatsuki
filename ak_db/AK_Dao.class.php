@@ -172,6 +172,14 @@ class AK_Dao {
 	}
 	
 	
+	/**
+	 * 接続解除
+	 */
+	public function closeConnection() {
+		$this -> connection = NULL;
+	}
+	
+	
 	// ------------------------------ private ---------------------------------------
 	
 	
