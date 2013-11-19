@@ -185,6 +185,14 @@ class AK_BaseController {
 		
 	}
 	
+	
+	/**
+	 * レスポンス返却後処理
+	 */
+	public function afterResponse() {
+		;
+	}
+	
 	//--------------------------------- protected ----------------------------------
 	
 	/**

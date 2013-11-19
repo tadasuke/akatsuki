@@ -163,6 +163,9 @@ class AK_Core {
 		} else {
 			;
 		}
+		
+		// レスポンス返却後処理
+		call_user_func( array( $this -> requestObj, 'afterResponse' ) );
 	
 	}
 	
