@@ -102,10 +102,10 @@ class AK_BaseController {
 	 * @var boolean
 	 */
 	private $responseFlg = TRUE;
-	protected function setResponseFlg( $responseFlg ) {
+	public function setResponseFlg( $responseFlg ) {
 		$this -> responseFlg = $responseFlg;
 	}
-	protected function getResponseFlg() {
+	public function getResponseFlg() {
 		return $this -> responseFlg;
 	}
 	
