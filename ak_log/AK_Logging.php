@@ -111,8 +111,12 @@ class AK_Logging extends AK_Log {
 	 */
 	private function makeLogMessage( $logLevel, $method, $line, $message ) {
 		
+		/*
 		$date = date( 'H:i:s' );
 		$logString = $this -> processId . "\t" . $date . "\t" . $this -> logHeader . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
+		*/
+		$logString = $this -> processId . "\t" . $this -> logHeader . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
+		
 		return $logString;
 	}
 	
