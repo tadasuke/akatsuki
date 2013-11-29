@@ -148,4 +148,26 @@ class AK_Gadget {
 		}
 		
 	}
+	
+	
+	/**
+	 * 2つの配列を比較し、同じ値が存在すればTRUE、存在しなければFALSEを返す
+	 * @param array $arrayA
+	 * @param array $arrayB
+	 */
+	public static function isMatchArray( array $arrayA, array $arrayB ) {
+		
+		$result = FALSE;
+		foreach ( $arrayA as $a ) {
+			if ( in_array( $a, $arrayB ) === TRUE ) {
+				$result = TRUE;
+				break;
+			} else {
+				;
+			}
+		}
+		
+		return $result;
+		
+	}
 }
