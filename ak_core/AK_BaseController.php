@@ -97,6 +97,19 @@ class AK_BaseController {
 		return $this -> contentType;
 	}
 	
+	
+	/**
+	 * レスポンスを返したUNIXタイム
+	 * @var int
+	 */
+	private $responseTime = NULL;
+	protected function setResponseTime( $responseTime ) {
+		$this -> responseTime = $responseTime;
+	}
+	protected function getResponseTime() {
+		return $this -> responseTime;
+	}
+	
 	/**
 	 * レスポンス返却フラグ
 	 * @var boolean
@@ -159,6 +172,7 @@ class AK_BaseController {
 					header( 'X-Content-Type-Options: nosniff' );
 					header( $contentType );
 					echo( $response );
+					$this -> setResponseTime( microtime( TRUE ) );
 				// レスポンスタイプがJSONP形式の場合
 				} else if ( $this -> responseType == self::RESPONSE_TYPE_JSONP ) {
 					$response = json_encode( $this -> responseParam );
@@ -166,12 +180,14 @@ class AK_BaseController {
 					header( 'X-Content-Type-Options: nosniff' );
 					header( $contentType );
 					echo( $this -> callback . '(' . $response . ')' );
+					$this -> setResponseTime( microtime( TRUE ) );
 				// レスポンスタイプがDATAの場合
 				} else if ( $this -> responseType == self::RESPONSE_TYPE_DATA ) {
 					$response = $this -> responseParam[0];
 					$contentType = $this -> contentType ?: self::DEFALUT_DATA_CONTENT_TYPE;
 					header( $contentType );
 					echo( $response );
+					$this -> setResponseTime( microtime( TRUE ) );
 				} else {
 					;
 				}
