@@ -60,12 +60,20 @@ class AK_Logging extends AK_Log {
 		return $this -> processId;
 	}
 	
+	
+	/**
+	 * ログ出力時刻
+	 * @var string
+	 */
+	private $logOutputDate = NULL;
+	
 	//------------------------------- construct -------------------------
 	
 	protected function __construct( $logFileName, $outLogLevel ) {
 		$this -> logFileName = $logFileName;
 		$this -> errorLogFileName = $logFileName . '.error';
 		$this -> outLogLevel = $outLogLevel;
+		$this -> logOutputDate = date( 'H:i:s' );
 		// プロセスID設定
 		$this -> processId = substr( sha1( microtime( TRUE ) . rand() ), 0, 8 );
 	}
@@ -116,6 +124,7 @@ class AK_Logging extends AK_Log {
 		$logString = $this -> processId . "\t" . $date . "\t" . $this -> logHeader . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
 		*/
 		$logString = $this -> processId . "\t" . $this -> logHeader . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
+		$logString = $this -> processId . "\t" . $this -> logOutputDate . "\t" . $this -> logHeader . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
 		
 		return $logString;
 	}
