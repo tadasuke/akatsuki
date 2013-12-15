@@ -67,6 +67,16 @@ class AK_Logging extends AK_Log {
 	 */
 	private $logOutputDate = NULL;
 	
+	
+	/**
+	 * ログ出力フラグ
+	 * @var boolean
+	 */
+	private $logOutputFlg = TRUE;
+	public function setLogOutputFlg( $logOutputFlg ) {
+		$this -> logOutputFlg = $logOutputFlg;
+	}
+	
 	//------------------------------- construct -------------------------
 	
 	protected function __construct( $logFileName, $outLogLevel ) {
@@ -85,6 +95,12 @@ class AK_Logging extends AK_Log {
 	 * @param mixed $string
 	 */
 	public function log( $logLevel, $method, $line, $message ) {
+		
+		if ( $this -> logOutputFlg === FALSE ) {
+			return;
+		} else {
+			;
+		}
 		
 		if ( $this -> outLogLevel < $logLevel ) {
 			return;
