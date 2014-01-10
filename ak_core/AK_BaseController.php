@@ -176,16 +176,25 @@ class AK_BaseController {
 			if ( count( $this -> responseParam ) > 0 ) {
 				// レスポンスタイプがJSON形式の場合
 				if ( $this -> responseType == self::RESPONSE_TYPE_JSON ) {
+					AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'TEST' );
 					if ( $this -> jsonEncodeFlg === TRUE ) {
+						AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'TEST' );
 						$response = json_encode( $this -> responseParam );
+						AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'TEST' );
 					} else {
 						$response = $this -> responseParam;
 					}
+					AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'TEST' );
 					$contentType = $this -> contentType ?: self::DEFAULT_JSON_CONTENT_TYPE;
+					AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'TEST' );
 					header( 'X-Content-Type-Options: nosniff' );
+					AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'TEST' );
 					header( $contentType );
+					AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'TEST' );
 					echo( $response );
+					AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'TEST' );
 					$this -> setResponseTime( microtime( TRUE ) );
+					AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'TEST' );
 				// レスポンスタイプがJSONP形式の場合
 				} else if ( $this -> responseType == self::RESPONSE_TYPE_JSONP ) {
 					$response = json_encode( $this -> responseParam );
