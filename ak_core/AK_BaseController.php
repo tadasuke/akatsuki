@@ -66,7 +66,7 @@ class AK_BaseController {
 	 * @var array
 	 */
 	private $responseParam = array();
-	protected function setResponseParam( array $array ) {
+	protected function setResponseParam( $array ) {
 		$this -> responseParam = $array;
 	}
 	protected function getResponseParam() {
@@ -122,6 +122,15 @@ class AK_BaseController {
 		return $this -> responseFlg;
 	}
 	
+	/**
+	 * JSONエンコードフラグ
+	 * @var boolean
+	 */
+	private $jsonEncodeFlg = TRUE;
+	protected function setJsonEncodeFlg( $jsonEncodeFlg ) {
+		$this -> jsonEncodeFlg = $jsonEncodeFlg;
+	}
+	
 	//---------------------------------- public ----------------------------------
 	
 	/**
@@ -167,7 +176,11 @@ class AK_BaseController {
 			if ( count( $this -> responseParam ) > 0 ) {
 				// レスポンスタイプがJSON形式の場合
 				if ( $this -> responseType == self::RESPONSE_TYPE_JSON ) {
-					$response = json_encode( $this -> responseParam );
+					if ( $this -> jsonEncodeFlg === TRUE ) {
+						$response = json_encode( $this -> responseParam );
+					} else {
+						$response = $this -> responseParam;
+					}
 					$contentType = $this -> contentType ?: self::DEFAULT_JSON_CONTENT_TYPE;
 					header( 'X-Content-Type-Options: nosniff' );
 					header( $contentType );
