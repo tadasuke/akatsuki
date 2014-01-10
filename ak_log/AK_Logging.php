@@ -136,14 +136,12 @@ class AK_Logging extends AK_Log {
 	private function makeLogMessage( $logLevel, $method, $line, $message ) {
 		
 		// 通常時
-		$logString = $this -> processId . "\t" . $this -> logOutputDate . "\t" . $this -> logHeader . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
+		//$logString = $this -> processId . "\t" . $this -> logOutputDate . "\t" . $this -> logHeader . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
 		
-		/*
 		// 詳細な秒数出力
 		list( $msec ) = explode( ' ', microtime() );
 		$msec *= 1000000;
 		$logString = $this -> processId . "\t" . date( 'H:i:s' ) . '.' . $msec . "\t" . $this -> logHeader . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
-		*/
 		
 		return $logString;
 	}
