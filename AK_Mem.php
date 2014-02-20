@@ -56,7 +56,7 @@ class AK_Mem extends Memcache{
 	 * インスタンス配列
 	 * @var array[AK_Mem]
 	 */
-	private static $instanceArray = array();
+	protected static $instanceArray = array();
 	public static function getInstanceArray() {
 		return self::$instanceArray;
 	}
@@ -154,13 +154,7 @@ class AK_Mem extends Memcache{
 	public function get( $key ) {
 		if ( isset( $this -> valueArray[$key] ) === FALSE ) {
 			
-			try {
-				$value = parent::get( $key );
-			}
-			catch ( Exception $e ) {
-				AK_Log::getLogClass() -> log( AK_Log::ALERT, __METHOD__, __LINE__, 'memcache_connect_error!!' );
-				return FALSE;
-			}
+			$value = parent::get( $key );
 			
 			$this -> valueArray[$key] = array(
 				  'value'       => $value
