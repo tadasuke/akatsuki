@@ -157,6 +157,7 @@ class AK_Gadget {
 	 */
 	public static function isMatchArray( array $arrayA, array $arrayB ) {
 		
+		/*
 		$result = FALSE;
 		foreach ( $arrayA as $a ) {
 			if ( in_array( $a, $arrayB ) === TRUE ) {
@@ -166,6 +167,9 @@ class AK_Gadget {
 				;
 			}
 		}
+		*/
+		
+		$result = (count( array_intersect( $arrayA, $arrayB ) ) > 0) ? TRUE : FALSE;
 		
 		return $result;
 		
