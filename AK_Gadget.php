@@ -57,7 +57,8 @@ class AK_Gadget {
 			}
 		}
 		
-		return $randArray[array_rand( $randArray ) ];
+		$result = (count( $randArray ) == 0) ? NULL : $randArray[array_rand( $randArray ) ];
+		return $result;
 		
 	}
 	
