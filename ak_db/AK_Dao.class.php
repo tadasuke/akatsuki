@@ -187,6 +187,7 @@ class AK_Dao {
 	 * DB接続
 	 */
 	private function connect() {
+		
 		$this -> connection = new PDO(
 			  $this -> dsn
 			, $this -> user

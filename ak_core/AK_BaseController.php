@@ -184,6 +184,7 @@ class AK_BaseController {
 					$contentType = $this -> contentType ?: self::DEFAULT_JSON_CONTENT_TYPE;
 					header( 'X-Content-Type-Options: nosniff' );
 					header( $contentType );
+					
 					echo( $response );
 					$this -> setResponseTime( microtime( TRUE ) );
 				// レスポンスタイプがJSONP形式の場合

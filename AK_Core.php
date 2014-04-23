@@ -5,6 +5,15 @@ require_once 'ak_core/AK_BaseController.php';
 class AK_Core {
 
 	/**
+	 * モジュール機能使用フラグ
+	 * @var boolean
+	 */
+	private static $useModuleFlg = FALSE;
+	public static function setUseModuleFlg( $useModuleFlg ) {
+		self::$useModuleFlg = $useModuleFlg;
+	}
+	
+	/**
 	 * アクション実行フラグ
 	 * @var boolean
 	 */
@@ -38,6 +47,15 @@ class AK_Core {
 	private static $instance = NULL;
 	
 	/**
+	 * モジュール名
+	 * @var string
+	 */
+	private $moduleName = '';
+	public function getModuleName() {
+		return $this -> moduleName;
+	}
+	
+	/**
 	 * コントローラ名
 	 * @var string
 	 */
@@ -60,7 +78,7 @@ class AK_Core {
 	 * @var array
 	 */
 	private $userParamArray = array();
-	
+		
 	/**
 	 * コントローラディレクトリ
 	 * @var string
@@ -116,7 +134,11 @@ class AK_Core {
 	public function run(){
 		
 		// コントローラ読み込み
-		require_once $this -> controllerDir . '/' . $this -> controllerName . '.php';
+		if ( self::$useModuleFlg === FALSE ) {
+			require_once $this -> controllerDir . '/' . $this -> controllerName . '.php';
+		} else {
+			require_once $this -> controllerDir . '/' . $this -> moduleName . '/' . $this -> controllerName . '.php';
+		}
 		
 		// コントローラオブジェクト作成
 		$this -> requestObj = new $this -> controllerName;
@@ -190,14 +212,36 @@ class AK_Core {
 		$array = explode( '?', $_SERVER['REQUEST_URI'] );
 		$array = explode( '/', $array[0] );
 		
+		// モジュール機能を利用する場合
+		if ( self::$useModuleFlg === TRUE ) {
+			if ( strlen( $array[1] ) == 0 ) {
+				$this -> moduleName = 'index';
+			} else {
+				$this -> moduleName = $array[1];
+				array_shift( $array );
+			}
+		} else {
+			;
+		}
+		
+//		Zend_Debug::dump( $this -> moduleName );
+		
 		// コントローラ名設定
-		$this -> controllerName = ucfirst( $array[1] ) . 'Controller';
+		if ( strlen( $array[1] ) == 0 ) {
+			$this -> controllerName = 'IndexController';
+		} else {
+			$this -> controllerName = ucfirst( $array[1] ) . 'Controller';
+		}
 		
 		// アクション名設定
-		$actionArray = explode( '-', $array[2] );
-		$this -> actionName = $actionArray[0];
-		for ( $i = 1; $i < count( $actionArray ); $i++ ) {
-			$this -> actionName .= ucfirst( $actionArray[$i] );
+		if ( isset( $array[2] ) === FALSE ) {
+			$this -> actionName = 'index';
+		} else {
+			$actionArray = explode( '-', $array[2] );
+			$this -> actionName = $actionArray[0];
+			for ( $i = 1; $i < count( $actionArray ); $i++ ) {
+				$this -> actionName .= ucfirst( $actionArray[$i] );
+			}
 		}
 		$this -> actionName .= 'Action';
 		
