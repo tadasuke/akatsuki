@@ -110,15 +110,23 @@ class AK_Logging extends AK_Log {
 		
 		$logString = $this -> makeLogMessage( $logLevel, $method, $line, $message );
 		
-		$FP = fopen( $this -> logFileName, 'a' );
-		fwrite( $FP, $logString . PHP_EOL );
-		fclose( $FP );
+		if ( self::$useSyslogFlg === FALSE ) {
+			$FP = fopen( $this -> logFileName, 'a' );
+			fwrite( $FP, $logString . PHP_EOL );
+			fclose( $FP );
+		} else {
+			syslog( $logLevel, $logString );
+		}
 		
 		// エラーログ対応
 		if ( $this -> outputErrorLogFlg === TRUE && $logLevel <= $this -> errorLogLevel ) {
-			$FP = fopen( $this -> errorLogFileName, 'a' );
-			fwrite( $FP, $logString . PHP_EOL );
-			fclose( $FP );
+			if ( self::$useSyslogFlg === FALSE ) {
+				$FP = fopen( $this -> errorLogFileName, 'a' );
+				fwrite( $FP, $logString . PHP_EOL );
+				fclose( $FP );
+			} else {
+				syslog( $logLevel, $logString );
+			}
 		} else {
 			;
 		}

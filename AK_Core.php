@@ -14,6 +14,15 @@ class AK_Core {
 	}
 	
 	/**
+	 * デフォルトモジュール名
+	 * @var string
+	 */
+	private static $defaultModuleName = 'index';
+	public static function setDefaultModuleName( $moduleName ) {
+		self::$defaultModuleName = $moduleName;
+	}
+	
+	/**
 	 * アクション実行フラグ
 	 * @var boolean
 	 */
@@ -156,8 +165,9 @@ class AK_Core {
 		
 		// 前処理
 		if ( call_user_func( array( $this -> requestObj, 'beforeRun' ) ) === FALSE ) {
-			echo( 'exec beforeRun error!!' );
-			exit;
+			//echo( 'exec beforeRun error!!' );
+			//exit;
+			return;
 		} else {
 			;
 		}
@@ -215,7 +225,7 @@ class AK_Core {
 		// モジュール機能を利用する場合
 		if ( self::$useModuleFlg === TRUE ) {
 			if ( strlen( $array[1] ) == 0 ) {
-				$this -> moduleName = 'index';
+				$this -> moduleName = self::$defaultModuleName;
 			} else {
 				$this -> moduleName = $array[1];
 				array_shift( $array );
@@ -223,8 +233,6 @@ class AK_Core {
 		} else {
 			;
 		}
-		
-//		Zend_Debug::dump( $this -> moduleName );
 		
 		// コントローラ名設定
 		if ( strlen( $array[1] ) == 0 ) {

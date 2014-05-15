@@ -43,6 +43,15 @@ class AK_Log {
 		return self::$akLoggingClass;
 	}
 	
+	/**
+	 * syslog使用フラグ
+	 * @var boolean
+	 */
+	protected static $useSyslogFlg = FALSE;
+	public static function setUseSyslogFlg( $useSyslogFlg ) {
+		self::$useSyslogFlg = $useSyslogFlg;
+	}
+	
 	//---------------------------------- private ------------------------------
 	
 	/**
@@ -52,12 +61,15 @@ class AK_Log {
 	private static function setting( $baseDir ) {
 		
 		// ログ出力先ディレクトリが存在しなければ作成
-		if ( file_exists( $baseDir ) === FALSE ) {
-			mkdir( $baseDir );
+		if ( self::$useSyslogFlg === FALSE ) {
+			if ( file_exists( $baseDir ) === FALSE ) {
+				mkdir( $baseDir );
+			} else {
+				;
+			}
 		} else {
 			;
 		}
-		
 	}
 	
 }

@@ -1,6 +1,6 @@
 <?php
 
-class AK_BaseController {
+abstract class AK_BaseController {
 	
 	const RESPONSE_TYPE_JSON  = 1;
 	const RESPONSE_TYPE_JSONP = 2;

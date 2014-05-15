@@ -49,12 +49,16 @@ class AK_DbConfig {
 	
 	//--------------------------------- コンストラクタ --------------------------------
 	
-	public function __construct( $databaseName, $host, $user, $password ) {
+	public function __construct( $databaseName, $host, $user, $password, $dsn = NULL ) {
 		$this -> databaseName = $databaseName;
 		$this -> host         = $host;
 		$this -> user         = $user;
 		$this -> password     = $password;
-		$this -> dsn          = 'mysql:dbname=' . $databaseName . ';host=' . $host;
+		if ( is_null( $dsn ) === TRUE ) {
+			$this -> dsn = 'mysql:dbname=' . $databaseName . ';host=' . $host;
+		} else {
+			$this -> dsn = $dsn;
+		}
 	}
 	
 	
