@@ -29,10 +29,13 @@ class AK_Log {
 		
 		$now = time();
 		$baseDir .= '/' . date( 'Ym', $now );
-		$logFileName = $headerLogFileName . date( 'Ymd', $now ) . '.log';
+		$errorBaseDir = $baseDir . '_error';
 		self::setting( $baseDir );
+		self::setting( $errorBaseDir );
+		$logFileName = $headerLogFileName . date( 'Ymd', $now ) . '.log';
+		$errorLogFileName = $logFileName . '.error';
 		
-		self::$akLoggingClass = new AK_Logging( $baseDir . '/' . $logFileName, $outLogLevel );
+		self::$akLoggingClass = new AK_Logging( $baseDir . '/' . $logFileName, $outLogLevel, $errorBaseDir . '/' . $errorLogFileName );
 	}
 	
 	/**

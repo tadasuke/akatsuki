@@ -79,9 +79,13 @@ class AK_Logging extends AK_Log {
 	
 	//------------------------------- construct -------------------------
 	
-	protected function __construct( $logFileName, $outLogLevel ) {
+	protected function __construct( $logFileName, $outLogLevel, $errorLogFileName = NULL ) {
 		$this -> logFileName = $logFileName;
-		$this -> errorLogFileName = $logFileName . '.error';
+		if ( is_null( $errorLogFileName ) === TRUE ) {
+			$this -> errorLogFileName = $logFileName . '.error';
+		} else {
+			$this -> errorLogFileName = $errorLogFileName;
+		}
 		$this -> outLogLevel = $outLogLevel;
 		$this -> logOutputDate = date( 'H:i:s' );
 		// プロセスID設定
