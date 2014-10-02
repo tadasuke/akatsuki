@@ -57,7 +57,8 @@ class AK_Gadget {
 			}
 		}
 		
-		return $randArray[array_rand( $randArray ) ];
+		$result = (count( $randArray ) == 0) ? NULL : $randArray[array_rand( $randArray ) ];
+		return $result;
 		
 	}
 	
@@ -130,5 +131,48 @@ class AK_Gadget {
 	
 		return $areaArray[$areaCode];
 	
+	}
+	
+	
+	/**
+	 * NULLを空文字にする
+	 * @param mixed $obj
+	 */
+	public static function nullToString( &$obj ) {
+		
+		if ( is_array( $obj ) === FALSE ) {
+			$obj = (is_null( $obj )) ? '' : $obj;
+		} else {
+			foreach ( $obj as &$value ) {
+				self::nullToString( $value );
+			}
+		}
+		
+	}
+	
+	
+	/**
+	 * 2つの配列を比較し、同じ値が存在すればTRUE、存在しなければFALSEを返す
+	 * @param array $arrayA
+	 * @param array $arrayB
+	 */
+	public static function isMatchArray( array $arrayA, array $arrayB ) {
+		
+		/*
+		$result = FALSE;
+		foreach ( $arrayA as $a ) {
+			if ( in_array( $a, $arrayB ) === TRUE ) {
+				$result = TRUE;
+				break;
+			} else {
+				;
+			}
+		}
+		*/
+		
+		$result = (count( array_intersect( $arrayA, $arrayB ) ) > 0) ? TRUE : FALSE;
+		
+		return $result;
+		
 	}
 }

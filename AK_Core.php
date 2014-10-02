@@ -80,6 +80,15 @@ class AK_Core {
 	}
 	
 	/**
+	 * レスポンスフラグ
+	 * @var boolean
+	 */
+	private $responseFlg = TRUE;
+	public function setResponseFlg( $responseFlg ) {
+		$this -> responseFlg = $responseFlg;
+	}
+	
+	/**
 	 * インスタンス取得
 	 * @return AK_core
 	 */
@@ -113,6 +122,7 @@ class AK_Core {
 		$this -> requestObj = new $this -> controllerName;
 		$this -> requestObj -> setControllerName( $this -> controllerName );
 		$this -> requestObj -> setActionName( $this -> actionName );
+		$this -> requestObj -> setResponseFlg( $this -> responseFlg );
 		
 		// 初期処理
 		if ( call_user_func( array( $this -> requestObj, 'initial' ), $this -> userParamArray ) === FALSE ) {
@@ -163,6 +173,9 @@ class AK_Core {
 		} else {
 			;
 		}
+		
+		// レスポンス返却後処理
+		call_user_func( array( $this -> requestObj, 'afterResponse' ) );
 	
 	}
 	

@@ -60,12 +60,34 @@ class AK_Logging extends AK_Log {
 		return $this -> processId;
 	}
 	
+	
+	/**
+	 * ログ出力時刻
+	 * @var string
+	 */
+	private $logOutputDate = NULL;
+	
+	
+	/**
+	 * ログ出力フラグ
+	 * @var boolean
+	 */
+	private $logOutputFlg = TRUE;
+	public function setLogOutputFlg( $logOutputFlg ) {
+		$this -> logOutputFlg = $logOutputFlg;
+	}
+	
 	//------------------------------- construct -------------------------
 	
-	protected function __construct( $logFileName, $outLogLevel ) {
+	protected function __construct( $logFileName, $outLogLevel, $errorLogFileName = NULL ) {
 		$this -> logFileName = $logFileName;
-		$this -> errorLogFileName = $logFileName . '.error';
+		if ( is_null( $errorLogFileName ) === TRUE ) {
+			$this -> errorLogFileName = $logFileName . '.error';
+		} else {
+			$this -> errorLogFileName = $errorLogFileName;
+		}
 		$this -> outLogLevel = $outLogLevel;
+		$this -> logOutputDate = date( 'H:i:s' );
 		// プロセスID設定
 		$this -> processId = substr( sha1( microtime( TRUE ) . rand() ), 0, 8 );
 	}
@@ -77,6 +99,12 @@ class AK_Logging extends AK_Log {
 	 * @param mixed $string
 	 */
 	public function log( $logLevel, $method, $line, $message ) {
+		
+		if ( $this -> logOutputFlg === FALSE ) {
+			return;
+		} else {
+			;
+		}
 		
 		if ( $this -> outLogLevel < $logLevel ) {
 			return;
@@ -111,8 +139,14 @@ class AK_Logging extends AK_Log {
 	 */
 	private function makeLogMessage( $logLevel, $method, $line, $message ) {
 		
-		$date = date( 'H:i:s' );
-		$logString = $this -> processId . "\t" . $date . "\t" . $this -> logHeader . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
+		// 通常時
+		//$logString = $this -> processId . "\t" . $this -> logOutputDate . "\t" . $this -> logHeader . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
+		
+		// 詳細な秒数出力
+		list( $msec ) = explode( ' ', microtime() );
+		$msec *= 1000000;
+		$logString = $this -> processId . "\t" . date( 'H:i:s' ) . '.' . $msec . "\t" . $this -> logHeader . "\t" . '(' . $logLevel . ')' . "\t" . $method . "\t" . $line . "\t" . $message;
+		
 		return $logString;
 	}
 	

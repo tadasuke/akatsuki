@@ -78,17 +78,42 @@ class AK_Dao {
 	}
 	
 	
+	/**
+	 * PDOステートメント取得
+	 * @param string $sqlcmd
+	 * @param array $bindArray
+	 * @return multitype:mixed
+	 */
+	public function getPdoStatement( $sqlcmd, $bindArray = array() ) {
+		
+		$sth = $this -> connection -> prepare( $sqlcmd );
+		$i = 1;
+		foreach ( $bindArray as $bind ) {
+			$sth -> bindValue( $i, $bind );
+			$i++;
+		}
+		$sth -> execute();
+		
+		return $sth;
+	}
+	
+	
 	
 	/**
 	 * 更新処理実行
 	 * @param string $sqlcmd
 	 * @param array $bindArray
+	 * @param boolean $startTransactionFlg
 	 * @return int $returnValue
 	 */
-	public function exec( $sqlcmd, $bindArray = array() ) {
+	public function exec( $sqlcmd, $bindArray = array(), $startTransactionFlg = TRUE ) {
 		
 		// トランザクション開始
-		$this -> startTransaction();
+		if ( $startTransactionFlg === TRUE ) {
+			$this -> startTransaction();
+		} else {
+			;
+		}
 		
 		$sth = $this -> connection -> prepare( $sqlcmd );
 		$i = 1;
@@ -164,6 +189,14 @@ class AK_Dao {
 		} else {
 			;
 		}
+	}
+	
+	
+	/**
+	 * 接続解除
+	 */
+	public function closeConnection() {
+		$this -> connection = NULL;
 	}
 	
 	

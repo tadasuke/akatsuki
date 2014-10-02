@@ -56,7 +56,7 @@ class AK_Mem extends Memcache{
 	 * インスタンス配列
 	 * @var array[AK_Mem]
 	 */
-	private static $instanceArray = array();
+	protected static $instanceArray = array();
 	public static function getInstanceArray() {
 		return self::$instanceArray;
 	}
@@ -153,6 +153,7 @@ class AK_Mem extends Memcache{
 	 */
 	public function get( $key ) {
 		if ( isset( $this -> valueArray[$key] ) === FALSE ) {
+			
 			$value = parent::get( $key );
 			
 			$this -> valueArray[$key] = array(
