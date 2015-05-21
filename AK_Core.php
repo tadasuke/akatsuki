@@ -2,6 +2,16 @@
 
 require_once 'ak_core/AK_BaseController.php';
 
+require_once 'AK_Config.php';
+require_once 'AK_Db.php';
+require_once 'AK_Exception.php';
+require_once 'AK_Gadget.php';
+require_once 'AK_Ini.php';
+require_once 'AK_Log.php';
+require_once 'AK_Mem.php';
+require_once 'AK_Registry.php';
+require_once 'AK_DateTime.php';
+
 class AK_Core {
 
 	/**

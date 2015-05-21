@@ -157,22 +157,46 @@ class AK_Gadget {
 	 * @param array $arrayB
 	 */
 	public static function isMatchArray( array $arrayA, array $arrayB ) {
-		
-		/*
-		$result = FALSE;
-		foreach ( $arrayA as $a ) {
-			if ( in_array( $a, $arrayB ) === TRUE ) {
-				$result = TRUE;
-				break;
-			} else {
-				;
-			}
-		}
-		*/
-		
+				
 		$result = (count( array_intersect( $arrayA, $arrayB ) ) > 0) ? TRUE : FALSE;
 		
 		return $result;
 		
 	}
+	
+	
+	/**
+	 * ファイルオーナー名取得
+	 * @param string $fileName
+	 */
+	public static function getFileOwnerName( $fileName ) {
+		
+		// ファイルのユーザIDを取得
+		$uid = fileowner( $fileName );
+		if ( $uid === FALSE ) {
+			return NULL;
+		} else {
+			;
+		}
+		// ユーザ情報を取得
+		$userInfoArray = posix_getpwuid( $uid );
+		return $userInfoArray['name'];
+		
+	}
+	
+	
+	/**
+	 * 最後の文字を返す(マルチバイト文字不可)
+	 * @param string $string
+	 * @return char
+	 */
+	public static function getLastChara( $string ) {
+		return substr( $string, strlen( $string ) - 1 );
+	}
+	
+	
+	public static function camel2snake( $camelString ) {
+		return strToLower( preg_replace( '/([a-z])([A-Z])/', "$1_$2", $camelString ) );
+	}
+	
 }

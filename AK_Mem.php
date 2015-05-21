@@ -109,7 +109,7 @@ class AK_Mem extends Memcache{
 	 * コンストラクタ
 	 * @param mixed
 	 */
-	private function __construct( $identificationName, $akMemConfig ) {
+	protected function __construct( $identificationName, $akMemConfig ) {
 		$this -> identificationName = $identificationName;
 		$this -> _addServer( $akMemConfig );
 	}

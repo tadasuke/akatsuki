@@ -23,6 +23,9 @@ class AK_Dao {
 	 * @var string
 	 */
 	private $dsn = null;
+	public function getDsn() {
+		return $this -> dsn;
+	}
 	
 	/**
 	 * ユーザ名

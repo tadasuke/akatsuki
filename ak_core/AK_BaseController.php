@@ -272,6 +272,7 @@ abstract class AK_BaseController {
 	
 	/**
 	 * 全パラメータ取得
+	 * 同一のキー名が存在する場合はPOSTを優先
 	 * @return array
 	 */
 	protected function getAllParam() {
