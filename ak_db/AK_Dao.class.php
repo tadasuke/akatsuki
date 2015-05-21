@@ -81,6 +81,26 @@ class AK_Dao {
 	}
 	
 	
+	/**
+	 * PDOステートメント取得
+	 * @param string $sqlcmd
+	 * @param array $bindArray
+	 * @return multitype:mixed
+	 */
+	public function getPdoStatement( $sqlcmd, $bindArray = array() ) {
+		
+		$sth = $this -> connection -> prepare( $sqlcmd );
+		$i = 1;
+		foreach ( $bindArray as $bind ) {
+			$sth -> bindValue( $i, $bind );
+			$i++;
+		}
+		$sth -> execute();
+		
+		return $sth;
+	}
+	
+	
 	
 	/**
 	 * 更新処理実行

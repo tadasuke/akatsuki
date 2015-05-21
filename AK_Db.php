@@ -80,6 +80,15 @@ abstract class AK_Db{
 	
 	
 	/**
+	 * PDOステートメント取得
+	 */
+	public function getPdoStatement() {
+		$dao = AK_DaoFactory::getDao( $this -> dbIdemtificationName );
+		return $dao -> getPdoStatement( $this -> sqlcmd, $this -> bindArray );
+	}
+	
+	
+	/**
 	 * 更新
 	 * @return int $returnValue
 	 */

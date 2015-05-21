@@ -28,11 +28,14 @@ class AK_Log {
 	public static function setAkLoggingClass( $baseDir, $outLogLevel, $headerLogFileName = NULL ) {
 		
 		$now = time();
+		$errorBaseDir = $baseDir . '/error';
 		$baseDir .= '/' . date( 'Ym', $now );
-		$logFileName = $headerLogFileName . date( 'Ymd', $now ) . '.log';
+		self::setting( $errorBaseDir );
 		self::setting( $baseDir );
+		$logFileName = $headerLogFileName . date( 'Ymd', $now ) . '.log';
+		$errorLogFileName = $logFileName . '.error';
 		
-		self::$akLoggingClass = new AK_Logging( $baseDir . '/' . $logFileName, $outLogLevel );
+		self::$akLoggingClass = new AK_Logging( $baseDir . '/' . $logFileName, $outLogLevel, $errorBaseDir . '/' . $errorLogFileName );
 	}
 	
 	/**
