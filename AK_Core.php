@@ -11,6 +11,7 @@ require_once 'AK_Log.php';
 require_once 'AK_Mem.php';
 require_once 'AK_Registry.php';
 require_once 'AK_DateTime.php';
+require_once 'AK_Service.php';
 
 class AK_Core {
 
