@@ -152,6 +152,7 @@ class AK_Logging extends AK_Log {
 	/**
 	 * ログ出力
 	 * @param mixed $string
+	 * @return string
 	 */
 	public function log( $logLevel, $method, $line, $message ) {
 		
@@ -208,6 +209,7 @@ class AK_Logging extends AK_Log {
 				;
 			}
 		}
+		return $logString;
 	}
 	
 	//-------------------------- private --------------------------------
