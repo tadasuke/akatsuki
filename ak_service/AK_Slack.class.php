@@ -55,6 +55,13 @@ class AK_Slack extends AK_Servcie{
 	
 	
 	/**
+	 * オプション配列
+	 * @var array
+	 */
+	private $optionArray = array();
+	
+	
+	/**
 	 * コンストラクタ
 	 * 親クラス以外からインスタンスを作成できないようにする
 	 */
@@ -62,6 +69,16 @@ class AK_Slack extends AK_Servcie{
 		;
 	}
 	
+	/**
+	 * オプション追加
+	 * @param string $key
+	 * @param $string $value
+	 */
+	public function addOption( $key, $value ) {
+		
+		$this -> optionArray[$key] = $value;
+		
+	}
 	
 	/**
 	 * 通知
@@ -70,11 +87,11 @@ class AK_Slack extends AK_Servcie{
 	public function notice( $string ) {
 		
 		// パラメータ設定
-		$paramArray = array(
-			  'text'     => $string
-			, 'username' => $this -> userName
-			, 'channel'  => $this -> channel
-		);
+		$paramArray = $this -> optionArray;
+		$paramArray['text']     = $string;
+		$paramArray['username'] = $this -> userName;
+		$paramArray['channel']  = $this -> channel;
+		
 		$paramJson = json_encode( $paramArray );
 		
 		// ピンポンダッシュでない場合はCURLを利用
