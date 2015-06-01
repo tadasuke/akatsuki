@@ -124,6 +124,26 @@ class AK_Logging extends AK_Log {
 	
 	
 	/**
+	 * 溜め込んだログを出力する
+	 */
+	public function outputBatchLog() {
+		
+		// 一括出力ログがなければ何もしない
+		if ( strlen( $this -> batchOutputLog ) == 0 ) {
+			return;
+		} else {
+			;
+		}
+		
+		// 一括ログ出力
+		file_put_contents( $this -> logFileName, $this -> batchOutputLog, FILE_APPEND );
+		
+		// 一括ログを初期化
+		$this -> batchOutputLog = '';
+		
+	}
+	
+	/**
 	 * デストラクタ
 	 */
 	public function __destruct() {
