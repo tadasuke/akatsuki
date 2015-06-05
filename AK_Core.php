@@ -174,6 +174,14 @@ class AK_Core {
 			;
 		}
 		
+		// 前々処理
+		$methodArray = array( $this -> requestObj, 'pre_' . $this -> actionName );
+		if ( is_callable( $methodArray ) === TRUE ) {
+			call_user_func( $methodArray );
+		} else {
+			;
+		}
+		
 		// 前処理
 		if ( call_user_func( array( $this -> requestObj, 'beforeRun' ) ) === FALSE ) {
 			//echo( 'exec beforeRun error!!' );
