@@ -195,6 +195,11 @@ class AK_Gadget {
 	}
 	
 	
+	/**
+	 * キャメルケースの文字列をスネークケースの文字列に変換する
+	 * @param unknown $camelString
+	 * @return string
+	 */
 	public static function camel2snake( $camelString ) {
 		return strToLower( preg_replace( '/([a-z])([A-Z])/', "$1_$2", $camelString ) );
 	}
