@@ -12,6 +12,7 @@ require_once 'AK_Mem.php';
 require_once 'AK_Registry.php';
 require_once 'AK_DateTime.php';
 require_once 'AK_Service.php';
+require_once 'AK_Ssh.php';
 
 class AK_Core {
 
