@@ -2,13 +2,15 @@
 
 abstract class AK_BaseController {
 	
-	const RESPONSE_TYPE_JSON  = 1;
-	const RESPONSE_TYPE_JSONP = 2;
-	const RESPONSE_TYPE_DATA  = 3;
+	const RESPONSE_TYPE_JSON    = 1;
+	const RESPONSE_TYPE_JSONP   = 2;
+	const RESPONSE_TYPE_DATA    = 3;
+	const RESPONSE_TYPE_MSGPACK = 4;
 	
-	const DEFAULT_JSON_CONTENT_TYPE  = 'Content-type: application/json; charset=UTF-8';
-	const DEFAULT_JSONP_CONTENT_TYPE = 'Content-type: application/javascript; charset=UTF-8';
-	const DEFALUT_DATA_CONTENT_TYPE  = 'Content-type: image/*';
+	const DEFAULT_JSON_CONTENT_TYPE    = 'Content-type: application/json; charset=UTF-8';
+	const DEFAULT_JSONP_CONTENT_TYPE   = 'Content-type: application/javascript; charset=UTF-8';
+	const DEFALUT_DATA_CONTENT_TYPE    = 'Content-type: image/*';
+	const DEFAULT_MSGPACK_CONTENT_TYPE = 'Content-type: application/x-msgpack; charset=x-user-defined';
 	
 	/**
 	 * コントローラ名
@@ -186,7 +188,6 @@ abstract class AK_BaseController {
 					header( $contentType );
 					
 					echo( $response );
-					$this -> setResponseTime( microtime( TRUE ) );
 				// レスポンスタイプがJSONP形式の場合
 				} else if ( $this -> responseType == self::RESPONSE_TYPE_JSONP ) {
 					$response = json_encode( $this -> responseParam );
@@ -194,17 +195,23 @@ abstract class AK_BaseController {
 					header( 'X-Content-Type-Options: nosniff' );
 					header( $contentType );
 					echo( $this -> callback . '(' . $response . ')' );
-					$this -> setResponseTime( microtime( TRUE ) );
 				// レスポンスタイプがDATAの場合
 				} else if ( $this -> responseType == self::RESPONSE_TYPE_DATA ) {
 					$response = $this -> responseParam[0];
 					$contentType = $this -> contentType ?: self::DEFALUT_DATA_CONTENT_TYPE;
 					header( $contentType );
 					echo( $response );
-					$this -> setResponseTime( microtime( TRUE ) );
+				// レスポンスタイプがMessagePackの場合
+				} else if ( $this -> responseType == self::RESPONSE_TYPE_MSGPACK ) {
+					$response = msgpack_serialize( $this -> responseParam );
+					$contentType = $this -> contentType ?: self::DEFAULT_MSGPACK_CONTENT_TYPE;
+					header( 'X-Content-Type-Options: nosniff' );
+					header( $contentType );
+					echo( $response );
 				} else {
 					;
 				}
+				$this -> setResponseTime( microtime( TRUE ) );
 			} else {
 				;
 			}
