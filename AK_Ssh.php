@@ -18,9 +18,11 @@ class AK_Ssh {
 	 * コネクション設定
 	 * @param string $host
 	 * @param string $password
+	 * @return AK_SshConnection
 	 */
 	public static function setSshConnection( $host, $id, $password ) {
 		self::$sshConnectionArray[$host] = new AK_SshConnection( $host, $id, $password );
+		return self::$sshConnectionArray[$host];
 	}
 	
 	/**

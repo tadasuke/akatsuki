@@ -64,7 +64,7 @@ class AK_SshConnection {
 	}
 	
 	/**
-	 * 今ストラクt
+	 * コンストラクタ
 	 * @param string $host
 	 * @param string $password
 	 */
