@@ -95,6 +95,15 @@ class AK_Logging extends AK_Log {
 		$this -> logOutputDateDetailFlg = $logOutputDateDetailFlg;
 	}
 	
+	/**
+	 * ログファイルパーミッション
+	 * @var int
+	 */
+	private $logFilePermission = NULL;
+	public function setLogFilePermission( $logFilePermission ) {
+		$this -> logFilePermission = $logFilePermission;
+	}
+	
 	
 	/**
 	 * 一括出力ログ
@@ -148,13 +157,6 @@ class AK_Logging extends AK_Log {
 	 */
 	public function __destruct() {
 		
-		// ログ一括出力フラグが立っていなければ何もしない
-		if ( $this -> batchOutputFlg === FALSE ) {
-			return;
-		} else {
-			;
-		}
-		
 		// 一括出力ログがなければ何もしない
 		if ( strlen( $this -> batchOutputLog ) == 0 ) {
 			return;
@@ -162,8 +164,19 @@ class AK_Logging extends AK_Log {
 			;
 		}
 		
-		// 一括ログ出力
-		file_put_contents( $this -> logFileName, $this -> batchOutputLog, FILE_APPEND );
+		// ログ一括出力フラグが立っていればログ出力
+		if ( $this -> batchOutputFlg === TRUE ) {
+			file_put_contents( $this -> logFileName, $this -> batchOutputLog, FILE_APPEND );
+		} else {
+			;
+		}
+		
+		// ファイルパーミッション対応
+		if ( is_null( $this -> logFilePermission ) === FALSE ) {
+			chmod( $this -> logFileName, intval( $this -> logFilePermission, 8 ) );
+		} else {
+			;
+		}
 		
 	}
 	
