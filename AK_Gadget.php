@@ -204,4 +204,30 @@ class AK_Gadget {
 		return strToLower( preg_replace( '/([a-z])([A-Z])/', "$1_$2", $camelString ) );
 	}
 	
+	
+	/**
+	 * 配列の中のstringをintにする
+	 * @param array $array
+	 */
+	public static function int2stringByArray( array $array ) {
+		
+		$responseArray = array();
+		foreach ( $array as $key => $value ) {
+			
+			// 値が配列の場合
+			if ( is_array( $value ) === TRUE ) {
+				$responseArray[$key] = self::int2stringByArray( $value );
+			// 値がintの場合
+			} else if ( is_int( $value ) === TRUE ) {
+				$responseArray[$key] = (string)$value;
+			} else {
+				$responseArray[$key] = $value;
+			}
+			
+		}
+		
+		return $responseArray;
+		
+	}
+	
 }
