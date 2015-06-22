@@ -96,16 +96,6 @@ class AK_Logging extends AK_Log {
 	}
 	
 	/**
-	 * ログファイルパーミッション
-	 * @var int
-	 */
-	private $logFilePermission = NULL;
-	public function setLogFilePermission( $logFilePermission ) {
-		$this -> logFilePermission = $logFilePermission;
-	}
-	
-	
-	/**
 	 * 一括出力ログ
 	 * @var string
 	 */
@@ -172,8 +162,8 @@ class AK_Logging extends AK_Log {
 		}
 		
 		// ファイルパーミッション対応
-		if ( is_null( $this -> logFilePermission ) === FALSE ) {
-			chmod( $this -> logFileName, intval( $this -> logFilePermission, 8 ) );
+		if ( is_null( parent::$logFilePermission ) === FALSE ) {
+			chmod( $this -> logFileName, intval( parent::$logFilePermission, 8 ) );
 		} else {
 			;
 		}

@@ -20,12 +20,23 @@ class AK_Log {
 	private static $akLoggingClass = NULL;
 	
 	/**
+	 * ログファイルパーミッション
+	 * @var int
+	 */
+	protected static $logFilePermission = NULL;
+	public static function setLogFilePermission( $logFilePermission ) {
+		self::$logFilePermission = $logFilePermission;
+	}
+	
+	/**
 	 * ログ出力クラス設定
 	 * @param string $baseDir
 	 * @param int $outLogLevel
 	 * @param string $headerLogFileName
 	 */
-	public static function setAkLoggingClass( $baseDir, $outLogLevel, $headerLogFileName = NULL ) {
+	public static function setAkLoggingClass( $baseDir, $outLogLevel, $headerLogFileName = NULL, $logFilePermission = NULL ) {
+		
+		self::$logFilePermission = $logFilePermission;
 		
 		$now = time();
 		$errorBaseDir = $baseDir . '/error';
@@ -67,6 +78,14 @@ class AK_Log {
 		if ( self::$useSyslogFlg === FALSE ) {
 			if ( file_exists( $baseDir ) === FALSE ) {
 				mkdir( $baseDir );
+				
+				// ファイルパーミッションが指定されていた場合
+				if ( is_null( self::$logFilePermission ) === FALSE ) {
+					chmod( $baseDir, intval( self::$logFilePermission, 8 ) );
+				} else {
+					;
+				}
+				
 			} else {
 				;
 			}
