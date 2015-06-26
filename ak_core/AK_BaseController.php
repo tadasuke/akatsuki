@@ -55,6 +55,21 @@ abstract class AK_BaseController {
 	private $userParam = array();
 	
 	/**
+	 * リクエストパラメータ配列
+	 * @var array
+	 */
+	private $requestParamArray = NULL;
+	public function getRequestParam( $key = NULL ) {
+		if ( is_null( $this -> requestParamArray ) === TRUE ) {
+			$this -> setRequestParamArray();
+		} else {
+			;
+		}
+		return array_key_exists( $key, $this -> requestParamArray ) ? $this -> requestParamArray[$key] : NULL;
+	}
+	
+	
+	/**
 	 * コールバック名
 	 * @var string
 	 */
@@ -144,13 +159,14 @@ abstract class AK_BaseController {
 		$this -> postParam = $_POST;
 		$this -> userParam = $userParamArray;
 		// callbackパラメータが設定されていた場合
-		$callback = $this -> getGetAndPostParam( 'callback' );
+		$callback = $this -> getRequestParam( 'callback' );
 		if ( strlen( $callback ) > 0 ) {
 			$this -> setResponseType( self::RESPONSE_TYPE_JSONP );
 			$this -> setCallback( $callback );
 		} else {
 			;
 		}
+		
 	}
 	
 	/**
@@ -315,6 +331,45 @@ abstract class AK_BaseController {
 	 */
 	protected function addResponseParam( $key, $value ) {
 		$this -> responseParam[$key] = $value;
+	}
+	
+	
+	//-------------------------------------------- private function ---------------------------------------
+	
+	/**
+	 * リクエストパラメータ設定
+	 */
+	private function setRequestParamArray() {
+		
+		$requestParamArray = array();
+		
+		// GET対応
+		$requestParamArray = $_GET;
+		
+		// POST対応
+		foreach ( $_POST as $key => $value ) {
+			$requestParamArray[$key] = $value;
+		}
+		
+		// リクエストボディ対応
+		$postBodyParam = file_get_contents( 'php://input' );
+		
+		if ( strlen( $postBodyParam ) > 0 ) {
+			
+			$array = json_decode( $postBodyParam, TRUE );
+			if ( is_null( $array ) === FALSE ) {
+				foreach ( $array as $key => $value ) {
+					$requestParamArray[$key] = $value;
+				}
+			} else {
+				;
+			}
+		} else {
+			;
+		}
+		
+		$this -> requestParamArray = $requestParamArray;
+		
 	}
 	
 }
