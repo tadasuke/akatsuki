@@ -206,7 +206,7 @@ class AK_Gadget {
 	
 	
 	/**
-	 * 配列の中のstringをintにする
+	 * 配列の中のintをstringにする
 	 * @param array $array
 	 */
 	public static function int2stringByArray( array $array ) {
