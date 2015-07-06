@@ -196,6 +196,16 @@ class AK_Gadget {
 	
 	
 	/**
+	 * 最後の文字を削除する
+	 * @param string $string
+	 * @return string
+	 */
+	public static function deleteLastWord( $string ) {
+		return substr( $string, 0, strlen( $string ) - 1 );
+	}
+	
+	
+	/**
 	 * キャメルケースの文字列をスネークケースの文字列に変換する
 	 * @param unknown $camelString
 	 * @return string
@@ -228,6 +238,42 @@ class AK_Gadget {
 		
 		return $responseArray;
 		
+	}
+	
+	
+	/**
+	 * ハッシュキー作成
+	 * @param int $num
+	 */
+	public static function akatsukiHash( $num, $glue = '-', $bodyLength = 6 ) {
+		
+		$tmpNum =  rand( 1, 9 ) . $num . rand( 0, 9 ) . rand( 0, 9 );;
+		$tmpNum *= 3;
+		
+		$header = '';
+		do {
+			$header .= self::intTo26Char( $tmpNum );
+		} while( strlen( $tmpNum ) > $bodyLength );
+		
+		return $header . $glue . $tmpNum;
+		
+	}
+	
+	/**
+	 * 数値から26進数の値を取り出す
+	 * @param int $num
+	 */
+	private static function intTo26Char( &$num ) {
+	
+		$hashtable = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$hashLength = strlen( $hashtable );
+	
+		$mod = $num % $hashLength;
+		$word = $hashtable[$mod];
+		$num = ($num - $mod) / $hashLength;
+	
+		return $word;
+	
 	}
 	
 }
