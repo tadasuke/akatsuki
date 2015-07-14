@@ -65,7 +65,19 @@ abstract class AK_BaseController {
 		} else {
 			;
 		}
-		return array_key_exists( $key, $this -> requestParamArray ) ? $this -> requestParamArray[$key] : NULL;
+		
+		if ( is_null( $key ) === TRUE ) {
+			$param = $this -> requestParamArray;
+		} else {
+			if ( array_key_exists( $key, $this -> requestParamArray ) === TRUE ) {
+				$param = $this -> requestParamArray[$key];
+			} else {
+				$param = NULL;
+			}
+		}
+		
+		return $param;
+		
 	}
 	
 	
@@ -344,25 +356,46 @@ abstract class AK_BaseController {
 		$requestParamArray = array();
 		
 		// GET対応
-		$requestParamArray = $_GET;
+		if ( AK_Core::getGetParamValidFlg() === TRUE ) {
+			$requestParamArray = $this -> getParam;
+		} else {
+			;
+		}
 		
 		// POST対応
-		foreach ( $_POST as $key => $value ) {
-			$requestParamArray[$key] = $value;
+		if ( AK_Core::getPostParamValidFlg() === TRUE ) {
+			foreach ( $this -> postParam as $key => $value ) {
+				$requestParamArray[$key] = $value;
+			}
+		} else {
+			;
 		}
 		
 		// リクエストボディ対応
-		$postBodyParam = file_get_contents( 'php://input' );
-		
-		if ( strlen( $postBodyParam ) > 0 ) {
+		if ( AK_Core::getRequestBodyParamValidFlg() === TRUE ) {
+			$postBodyParam = file_get_contents( 'php://input' );
 			
-			$array = json_decode( $postBodyParam, TRUE );
-			if ( is_null( $array ) === FALSE ) {
-				foreach ( $array as $key => $value ) {
-					$requestParamArray[$key] = $value;
+			if ( strlen( $postBodyParam ) > 0 ) {
+				
+				$array = json_decode( $postBodyParam, TRUE );
+				if ( is_null( $array ) === FALSE ) {
+					foreach ( $array as $key => $value ) {
+						$requestParamArray[$key] = $value;
+					}
+				} else {
+					;
 				}
 			} else {
 				;
+			}
+		} else {
+			;
+		}
+		
+		// ユーザパラメータ対応
+		if ( AK_Core::getUserParamValidFlg() === TRUE ) {
+			foreach ( $this -> userParam as $key => $value ) {
+				$requestParamArray[$key] = $value;
 			}
 		} else {
 			;

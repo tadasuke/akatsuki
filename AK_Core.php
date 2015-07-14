@@ -62,6 +62,54 @@ class AK_Core {
 	}
 	
 	/**
+	 * GETパラメータ有効フラグ
+	 * @var boolean
+	 */
+	private static $getParamValidFlg = TRUE;
+	public static function setGetParamValidFlg( $getParamValidFlg ) {
+		self::$getParamValidFlg = $getParamValidFlg;
+	}
+	public static function getGetParamValidFlg() {
+		return self::$getParamValidFlg;
+	}
+	
+	/**
+	 * POSTパラメータ有効フラグ
+	 * @var boolean
+	 */
+	private static $postParamValidFlg = TRUE;
+	public static function setPostParamValidFlg( $postParamValidFlg ) {
+		self::$postParamValidFlg = $postParamValidFlg;
+	}
+	public static function getPostParamValidFlg() {
+		return self::$postParamValidFlg;
+	}
+
+	/**
+	 * リクエストボディパラメータ有効フラグ
+	 * @var boolean
+	 */
+	private static $requestBodyParamValidFlg = TRUE;
+	public static function setRequestBodyParamValidFlg( $requestBodyParamValidFlg ) {
+		self::$requestBodyParamValidFlg = $requestBodyParamValidFlg;
+	}
+	public static function getRequestBodyParamValidFlg() {
+		return self::$requestBodyParamValidFlg;
+	}
+	
+	/**
+	 * ユーザパラメータ有効フラグ
+	 * @var boolean
+	 */
+	private static $userParamValidFlg = TRUE;
+	public static function setUserParamValidFlg( $userParamValidFlg ) {
+		self::$userParamValidFlg = $userParamValidFlg;
+	}
+	public static function getUserParamValidFlg() {
+		return self::$userParamValidFlg;
+	}
+	
+	/**
 	 * インスタンス
 	 * @var AK_Core
 	 */
