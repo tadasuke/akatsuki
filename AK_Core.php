@@ -155,10 +155,16 @@ class AK_Core {
 	public function run(){
 		
 		// コントローラ読み込み
+		$controllerFileName = NULL;
 		if ( self::$useModuleFlg === FALSE ) {
-			require_once $this -> controllerDir . '/' . $this -> controllerName . '.php';
+			$controllerFileName = $this -> controllerDir . '/' . $this -> controllerName . '.php';
 		} else {
-			require_once $this -> controllerDir . '/' . $this -> moduleName . '/' . $this -> controllerName . '.php';
+			$controllerFileName = $this -> controllerDir . '/' . $this -> moduleName . '/' . $this -> controllerName . '.php';
+		}
+		if ( file_exists( $controllerFileName ) === FALSE ) {
+			throw new AK_Excepiton( '', 'controller_file_no_exists:' . $controllerFileName, __FILE__, __LINE__ );
+		} else {
+			;
 		}
 		
 		// コントローラオブジェクト作成
@@ -194,6 +200,13 @@ class AK_Core {
 		
 		// 処理実行
 		if ( self::$execActionFlg === TRUE ) {
+			
+			if ( is_callable( array( $this -> requestObj, $this -> actionName ) ) === FALSE ) {
+				throw new AK_Excepiton( '', 'action_name_invalid:' . get_class( $this -> requestObj ) . '/' . $this -> actionName, __FILE__, __LINE__ );
+			} else {
+				;
+			}
+			
 			if ( call_user_func( array( $this -> requestObj, $this -> actionName ) ) === FALSE ) {
 				echo( 'exec action error!!' );
 				exit;
