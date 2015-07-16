@@ -49,6 +49,12 @@ abstract class AK_BaseController {
 	private $postParam = array();
 	
 	/**
+	 * リクエストボディパラメータ配列
+	 * @var array
+	 */
+	private $requestBodyParam = array();
+	
+	/**
 	 * ユーザパラメータ配列
 	 * @var array
 	 */
@@ -170,6 +176,7 @@ abstract class AK_BaseController {
 		$this -> getParam  = $_GET;
 		$this -> postParam = $_POST;
 		$this -> userParam = $userParamArray;
+		$this -> setRequestBodyParam();
 		// callbackパラメータが設定されていた場合
 		$callback = $this -> getRequestParam( 'callback' );
 		if ( strlen( $callback ) > 0 ) {
@@ -306,20 +313,6 @@ abstract class AK_BaseController {
 	}
 	
 	/**
-	 * 全パラメータ取得
-	 * 同一のキー名が存在する場合はPOSTを優先
-	 * @return array
-	 */
-	protected function getAllParam() {
-		$postParamArray = $this -> getAllPostParam();
-		$getParamArray  = $this -> getAllGetParam();
-		foreach ( $getParamArray as $key => $value ) {
-			if ( !array_key_exists( $key, $postParamArray ) ) $postParamArray[$key] = $value;
-		}
-		return $postParamArray;
-	}
-	
-	/**
 	 * 全ユーザパラメータ取得
 	 * @return array
 	 */
@@ -349,6 +342,36 @@ abstract class AK_BaseController {
 	//-------------------------------------------- private function ---------------------------------------
 	
 	/**
+	 * リクエストボディパラメータ配列設定
+	 */
+	private function setRequestBodyParam() {
+		
+		$requestParamArray = array();
+		
+		$requestBody = file_get_contents( 'php://input' );
+		
+		AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, Zend_Debug::dump( $requestBody, '', FALSE ) );
+			
+		if ( strlen( $requestBody ) > 0 ) {
+		
+			$array = json_decode( $requestBody, TRUE );
+			if ( is_null( $array ) === FALSE ) {
+				foreach ( $array as $key => $value ) {
+					$requestParamArray[$key] = $value;
+				}
+			} else {
+				;
+			}
+		} else {
+			;
+		}
+		
+		$this -> requestBodyParam = $requestParamArray;
+		
+	}
+	
+	
+	/**
 	 * リクエストパラメータ設定
 	 */
 	private function setRequestParamArray() {
@@ -373,20 +396,8 @@ abstract class AK_BaseController {
 		
 		// リクエストボディ対応
 		if ( AK_Core::getRequestBodyParamValidFlg() === TRUE ) {
-			$postBodyParam = file_get_contents( 'php://input' );
-			
-			if ( strlen( $postBodyParam ) > 0 ) {
-				
-				$array = json_decode( $postBodyParam, TRUE );
-				if ( is_null( $array ) === FALSE ) {
-					foreach ( $array as $key => $value ) {
-						$requestParamArray[$key] = $value;
-					}
-				} else {
-					;
-				}
-			} else {
-				;
+			foreach ( $this -> requestBodyParam as $key => $value ) {
+				$requestParamArray[$key] = $value;
 			}
 		} else {
 			;

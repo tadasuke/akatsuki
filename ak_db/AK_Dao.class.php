@@ -71,8 +71,24 @@ class AK_Dao {
 			$i++;
 		}
 		$sth -> execute();
+		
+		$datetimeColumnNameArray = array();
+		for ($i = 0; $i < $sth -> columncount(); ++$i ) {
+			$columnMeta = $sth -> getColumnMeta( $i );
+			$columnType = $columnMeta['native_type'];
+			
+			if ( strcmp( $columnType, 'DATETIME' ) == 0 || strcmp( $columnType, 'TIMESTAMP' ) == 0 ) {
+				$datetimeColumnNameArray[] = $columnMeta['name'];
+			} else {
+				;
+			}
+		}
+		
 		$valueArray = array();
 		while ( $value = $sth -> fetch( PDO::FETCH_ASSOC ) ) {
+			foreach ( $datetimeColumnNameArray as $datetimeColumnName ) {
+				$value[$datetimeColumnName] = new AK_DateTime( $value[$datetimeColumnName] );
+			}
 			$valueArray[] = $value;
 		}
 
@@ -216,10 +232,11 @@ class AK_Dao {
 			, $this -> user
 			, $this -> password
 			, array(
-				  PDO::ATTR_PERSISTENT         => FALSE
+				  PDO::ATTR_PERSISTENT => FALSE
 			)
 		);
 		$this -> connection -> setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+		$this -> connection -> setAttribute( PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC );
 	}
 	
 }
