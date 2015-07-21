@@ -6,7 +6,7 @@ class AK_DateTime extends DateTime {
 	 * 基本フォーマット
 	 * @var string
 	 */
-	private $baseFormat = 'YmdHis';
+	private $baseFormat = 'U';
 	public function setBaseFormat( $baseFormat ) {
 		$this -> baseFormat = $baseFormat;
 	}
@@ -32,8 +32,11 @@ class AK_DateTime extends DateTime {
 	/**
 	 * 日時取得
 	 */
-	public function getDateTime() {
-		return $this -> format( $this -> baseFormat );
+	public function getDateTime( $format = NULL ) {
+		if ( is_null( $format ) === TRUE ) {
+			$format = $this -> baseFormat;
+		}
+		return $this -> format( $format );
 	}
 	
 	
