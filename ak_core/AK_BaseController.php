@@ -53,6 +53,9 @@ abstract class AK_BaseController {
 	 * @var array
 	 */
 	private $requestBodyParam = array();
+	public function getRequestBodyParam() {
+		return $this -> requestBodyParam;
+	}
 	
 	/**
 	 * ユーザパラメータ配列
@@ -350,8 +353,6 @@ abstract class AK_BaseController {
 		
 		$requestBody = file_get_contents( 'php://input' );
 		
-		AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, Zend_Debug::dump( $requestBody, '', FALSE ) );
-			
 		if ( strlen( $requestBody ) > 0 ) {
 		
 			$array = json_decode( $requestBody, TRUE );

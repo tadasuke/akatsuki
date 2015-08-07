@@ -85,6 +85,9 @@ class AK_Logging extends AK_Log {
 	public function setBatchOutputFlg( $batchOutputFlg ) {
 		$this -> batchOutputFlg = $batchOutputFlg;
 	}
+	public function getBatchOutputFlg() {
+		return $this -> batchOutputFlg;
+	}
 	
 	/**
 	 * ログ出力時刻詳細フラグ

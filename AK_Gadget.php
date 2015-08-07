@@ -276,4 +276,28 @@ class AK_Gadget {
 	
 	}
 	
+	
+	/**
+	 * 1ならTRUE、0ならFALSE、それ以外ならNULLを返す
+	 * @param string $string
+	 * @param boolean
+	 */
+	public static function string2Boolean( $string ) {
+		
+		if ( is_bool( $string ) === TRUE ) {
+			return $string;
+		} else {
+			;
+		}
+		
+		if ( strcmp( $string, '1' ) == 0 ) {
+			return TRUE;
+		} else if ( strcmp( $string, '0' ) == 0 ) {
+			return FALSE;
+		} else {
+			return NULL;
+		}
+		
+	}
+	
 }

@@ -16,6 +16,22 @@ class AK_DateTime extends DateTime {
 	
 	
 	/**
+	 * コンストラクタ
+	 */
+	public function __construct( $time = NULL ) {
+		
+		parent::__construct( $time );
+		
+		// パラメータがUNIXタイムだった時はタイムゾーンを再設定
+		if ( strpos( $time, '@' ) === 0 ) {
+			$this -> setTimezone( new DateTimeZone( 'Asia/Tokyo' ) );
+		} else {
+			;
+		}
+		
+	}
+	
+	/**
 	 * 時刻変更
 	 * @param int $seconds
 	 * @param boolean $progressFlg
