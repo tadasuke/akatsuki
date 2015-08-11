@@ -78,7 +78,8 @@ class AK_Goole {
 	 * @var Google_Client
 	 */
 	private $googleClient = NULL;
-	private function getGoogleClient() {
+	public function getGoogleClient() {
+		
 		if ( is_null( $this -> googleClient ) === TRUE ) {
 			$this -> setGoogleClient();
 		} else {
@@ -105,8 +106,8 @@ class AK_Goole {
 		
 		// Googleクライアントオブジェクト取得
 		$googleClient = $this -> getGoogleClient();
-		
 		$googleToken = json_decode( $googleClient -> getAccessToken(), TRUE );
+		
 		return self::extractGoogleIdByToken( $this -> googleClient );
 		
 	}
@@ -141,8 +142,11 @@ class AK_Goole {
 		$googleClient -> setAccessType( 'offline' );
 		$googleClient -> setApprovalPrompt( 'force' );
 		
+		$this -> googleClient = $googleClient;
+		
 		// セッションからトークンが取得できなかった場合
 		if ( isset( $_SESSION[$this -> sessionId] ) === FALSE ) {
+			
 			// トークン設定
 			$result = $this -> getGoogleTokenByCode();
 			
@@ -153,23 +157,21 @@ class AK_Goole {
 			}
 		// セッションからトークンが取得できた場合
 		} else {
-			$googleClient -> setAccessToken( $_SESSION[$this -> sessionId] );
+			$this -> googleClient -> setAccessToken( $_SESSION[$this -> sessionId] );
 				
 			// Googleトークンの期限が切れていた場合
-			if ( $googleClient -> getAuth() -> isAccessTokenExpired() === TRUE ) {
+			if ( $this -> googleClient -> getAuth() -> isAccessTokenExpired() === TRUE ) {
 					
 				// アクセストークンを再取得
-				$googleClient -> refreshToken( $googleClient -> getRefreshToken() );
+				$this -> googleClient -> refreshToken( $googleClient -> getRefreshToken() );
 			
 				// セッションにアクセストークンを設定
-				$_SESSION['g_token'] = $googleClient -> getAccessToken();
+				$_SESSION['g_token'] = $this -> googleClient -> getAccessToken();
 				
 			} else {
 				;
 			}
 		}
-		
-		$this -> googleClient = $googleClient;
 		
 	}
 	
