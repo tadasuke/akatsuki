@@ -207,6 +207,10 @@ class AK_Goole {
 			// アクセストークンをセッションに設定
 			$_SESSION[$this -> sessionId] = $this -> googleClient -> getAccessToken();
 			
+			// コールバックURLにリダイレクト(codeのパラメータを隠すため)
+			header( 'Location:' . $this -> getCallbackUrl() );
+			exit;
+			
 		}
 		
 		return TRUE;
