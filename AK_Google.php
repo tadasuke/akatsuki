@@ -112,8 +112,6 @@ class AK_Goole {
 		
 	}
 	
-	
-	
 	/**
 	 * GoogleIDセッション有効期限
 	 */
@@ -123,6 +121,17 @@ class AK_Goole {
 		$expirationDate = $googleTokenArray['created'] + $googleTokenArray['expires_in'];
 		
 		return new AK_DateTime( '@' . $expirationDate );
+		
+	}
+	
+	/**
+	 * プロフィールイメージURL取得
+	 */
+	public function getProfileImageUrl() {
+		
+		$plus = new Google_Service_Plus( $this -> getGoogleClient() );
+		$imageUrl = $plus -> people -> get( 'me' ) -> getImage() -> getUrl();
+		return $imageUrl;
 		
 	}
 	
