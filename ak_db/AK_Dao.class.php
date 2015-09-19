@@ -87,7 +87,11 @@ class AK_Dao {
 		$valueArray = array();
 		while ( $value = $sth -> fetch( PDO::FETCH_ASSOC ) ) {
 			foreach ( $datetimeColumnNameArray as $datetimeColumnName ) {
-				$value[$datetimeColumnName] = new AK_DateTime( $value[$datetimeColumnName] );
+				if ( strlen( $value[$datetimeColumnName] ) > 0 ) {
+					$value[$datetimeColumnName] = new AK_DateTime( $value[$datetimeColumnName] );
+				} else {
+					$value[$datetimeColumnName] = NULL;
+				}
 			}
 			$valueArray[] = $value;
 		}
