@@ -88,6 +88,34 @@ class AK_Goole {
 		return $this -> googleClient;
 	}
 	
+	/**
+	 * Gmailアドレス
+	 * @var string
+	 */
+	private $gmailAddress = NULL;
+	public function getGmailAddress() {
+		if ( is_null( $this -> gmailAddress ) === TRUE ) {
+			$this -> setGoogleClient();
+		} else {
+			;
+		}
+		return $this -> gmailAddress;
+	}
+	
+	/**
+	 * GoogleユーザID
+	 * @var string
+	 */
+	private $googleUserId = NULL;
+	public function getGoogleUserId() {
+		if ( is_null( $this -> googleUserId ) === TRUE ) {
+			$this -> setGoogleClient();
+		} else {
+			;
+		}
+		return $this -> googleUserId;
+	}
+	
 	//---------------------------------------- public function -----------------------------------------------
 	
 	/**
@@ -97,19 +125,6 @@ class AK_Goole {
 	public function __construct( $sessionId ) {
 		session_start();
 		$this -> sessionId = $sessionId;
-	}
-	
-	/**
-	 * グーグルID取得
-	 */
-	public function getGoogleId() {
-		
-		// Googleクライアントオブジェクト取得
-		$googleClient = $this -> getGoogleClient();
-		$googleToken = json_decode( $googleClient -> getAccessToken(), TRUE );
-		
-		return self::extractGoogleIdByToken( $this -> googleClient );
-		
 	}
 	
 	/**
@@ -182,6 +197,9 @@ class AK_Goole {
 			}
 		}
 		
+		// Gmailアドレス、GoogleユーザID設定
+		$this -> extractGmailAddressGoogleUserId();
+		
 	}
 	
 	
@@ -232,18 +250,22 @@ class AK_Goole {
 	
 	/**
 	 * トークンからGoogleIDを抽出する
-	 * @param Google_Client $googleClient
-	 * @return string $gmailAddress
 	 */
-	private function extractGoogleIdByToken( Google_Client $googleClient ) {
+	private function extractGmailAddressGoogleUserId() {
 	
+		$googleClient = $this -> getGoogleClient();
 		$accessToken = json_decode( $googleClient -> getAccessToken(), TRUE );
 		$id = explode( '.', $accessToken['id_token'] );
 		$id = base64_decode( $id[1] );
 		$id = json_decode( $id, TRUE );
-		$googleId = $id['email'];
-	
-		return $googleId;
+		
+		$gmailAddress = $id['email'];
+		$googleUserId = $id['sub'];
+		AK_Log::getLogClass() -> log( AK_Log::DEBUG, __METHOD__, __LINE__, '$gmailAddress:' . $gmailAddress );
+		AK_Log::getLogClass() -> log( AK_Log::DEBUG, __METHOD__, __LINE__, '$googleUserId:' . $googleUserId );
+		
+		$this -> gmailAddress = $gmailAddress;
+		$this -> googleUserId = $googleUserId;
 	
 	}
 	
