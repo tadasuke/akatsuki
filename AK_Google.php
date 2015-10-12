@@ -142,10 +142,10 @@ class AK_Goole {
 	/**
 	 * プロフィールイメージURL取得
 	 */
-	public function getProfileImageUrl() {
+	public function getProfileImageUrl( $userId = 'me' ) {
 		
 		$plus = new Google_Service_Plus( $this -> getGoogleClient() );
-		$imageUrl = $plus -> people -> get( 'me' ) -> getImage() -> getUrl();
+		$imageUrl = $plus -> people -> get( $userId ) -> getImage() -> getUrl();
 		return $imageUrl;
 		
 	}
