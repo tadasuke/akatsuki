@@ -70,7 +70,7 @@ class AK_Goole {
 	 */
 	private $sessionId = NULL;
 	public function getSessionId() {
-		return $this ->sessionId;
+		return $this -> sessionId;
 	}
 	
 	/**
@@ -116,6 +116,12 @@ class AK_Goole {
 		return $this -> googleUserId;
 	}
 	
+	/**
+	 * Google認証フラグ
+	 * @var boolean
+	 */
+	private $googleOAuthFlg = FALSE;
+	
 	//---------------------------------------- public function -----------------------------------------------
 	
 	/**
@@ -123,8 +129,50 @@ class AK_Goole {
 	 * @param string $sessionId
 	 */
 	public function __construct( $sessionId ) {
-		session_start();
 		$this -> sessionId = $sessionId;
+	}
+	
+	/**
+	 * Google認証
+	 */
+	public function googleOAuth() {
+		
+		AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'START' );
+		
+		// 既に認証済の場合は何もしない
+		if ( $this -> googleOAuthFlg === TRUE ) {
+			AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'END' );
+			return;
+		} else {
+			;
+		}
+		
+		// セッションからトークンが取得できなかった場合
+		session_start();
+		if ( isset( $_SESSION[$this -> sessionId] ) === FALSE ) {
+			
+			// トークン設定
+			$result = $this -> getGoogleTokenByCode();
+				
+			if ( $result === FALSE ) {
+				return NULL;
+			} else {
+				;
+			}
+			
+		// セッションからトークンが取得できた場合
+		} else {
+			$this -> getGoogleClient() -> setAccessToken( $_SESSION[$this -> sessionId] );
+		}
+		
+		// Gmailアドレス、GoogleユーザID設定
+		$this -> extractGmailAddressGoogleUserId();
+		
+		// 認証フラグを立てる
+		$this -> googleOAuthFlg = TRUE;
+		
+		AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'END' );
+		
 	}
 	
 	/**
@@ -144,12 +192,55 @@ class AK_Goole {
 	 */
 	public function getProfileImageUrl( $userId = 'me' ) {
 		
+		AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'START' );
+		
 		$plus = new Google_Service_Plus( $this -> getGoogleClient() );
 		$imageUrl = $plus -> people -> get( $userId ) -> getImage() -> getUrl();
 		return $imageUrl;
 		
 	}
 	
+	
+	/**
+	 * Googleトークンを取得
+	 */
+	public function getGoogleTokenByCode() {
+	
+		// GETパラメータにcodeが設定されていない場合
+		if ( isset( $_GET['code'] ) === FALSE ) {
+				
+			// リダイレクトが許可されている場合は、認証URLにリダイレクト
+			if ( $this -> permitRedirectFlg === TRUE ) {
+				// 認証URLを作成
+				$authUrl = $this -> getGoogleClient() -> createAuthUrl();
+
+				// 認証URLにリダイレクト
+				header( 'Location:' . $authUrl );
+				exit;
+	
+				// リダイレクトが許可されていない場合
+			} else {
+				return FALSE;
+			}
+				
+			// GETパラメータにcodeが設定されていた場合
+		} else {
+				
+			// アクセストークンを取得
+			$this -> getGoogleClient() -> authenticate( $_GET['code']);
+				
+			// アクセストークンをセッションに設定
+			$_SESSION[$this -> sessionId] = $this -> googleClient -> getAccessToken();
+				
+			// コールバックURLにリダイレクト(codeのパラメータを隠すため)
+			header( 'Location:' . $this -> getCallbackUrl() );
+			exit;
+				
+		}
+	
+		return TRUE;
+	
+	}
 	
 	//---------------------------------------- private function -----------------------------------------------
 	
@@ -158,95 +249,25 @@ class AK_Goole {
 	 */
 	private function setGoogleClient() {
 		
+		AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'START' );
+		
 		$googleClient = new Google_Client();
 		$googleClient -> setClientId( $this -> clientId );
 		$googleClient -> setClientSecret( $this -> clientSecret );
 		$googleClient -> setRedirectUri( $this -> callbackUrl );
 		$googleClient -> setScopes( $this -> scopeArray );
 		$googleClient -> setAccessType( 'offline' );
-		$googleClient -> setApprovalPrompt( 'force' );
+		//$googleClient -> setApprovalPrompt( 'force' );
 		
 		$this -> googleClient = $googleClient;
-		
-		// セッションからトークンが取得できなかった場合
-		if ( isset( $_SESSION[$this -> sessionId] ) === FALSE ) {
-			
-			// トークン設定
-			$result = $this -> getGoogleTokenByCode();
-			
-			if ( $result === FALSE ) {
-				return NULL;
-			} else {
-				;
-			}
-		// セッションからトークンが取得できた場合
-		} else {
-			$this -> googleClient -> setAccessToken( $_SESSION[$this -> sessionId] );
-				
-			// Googleトークンの期限が切れていた場合
-			if ( $this -> googleClient -> getAuth() -> isAccessTokenExpired() === TRUE ) {
-					
-				// アクセストークンを再取得
-				$this -> googleClient -> refreshToken( $googleClient -> getRefreshToken() );
-			
-				// セッションにアクセストークンを設定
-				$_SESSION['g_token'] = $this -> googleClient -> getAccessToken();
-				
-			} else {
-				;
-			}
-		}
-		
-		// Gmailアドレス、GoogleユーザID設定
-		$this -> extractGmailAddressGoogleUserId();
+		AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'END' );
 		
 	}
 	
 	
-	/**
-	 * コードを元にGoogleトークンを取得
-	 */
-	private function getGoogleTokenByCode() {
-		
-		// GETパラメータにcodeが設定されていない場合
-		if ( isset( $_GET['code'] ) === FALSE ) {
-			
-			// リダイレクトが許可されている場合は、認証URLにリダイレクト
-			if ( $this -> permitRedirectFlg === TRUE ) {
-				// 認証URLを作成
-				$authUrl = $this -> getGoogleClient() -> createAuthUrl();
-				
-				// 認証URLにリダイレクト
-				header( 'Location:' . $authUrl );
-				exit;
-				
-			// リダイレクトが許可されていない場合
-			} else {
-				return FALSE;
-			}
-			
-		// GETパラメータにcodeが設定されていた場合
-		} else {
-			
-			// アクセストークンを取得
-			$this -> googleClient -> authenticate( $_GET['code']);
-			
-			// アクセストークンをセッションに設定
-			$_SESSION[$this -> sessionId] = $this -> googleClient -> getAccessToken();
-			
-			// コールバックURLにリダイレクト(codeのパラメータを隠すため)
-			header( 'Location:' . $this -> getCallbackUrl() );
-			exit;
-			
-		}
-		
-		return TRUE;
-		
-	}
 	
 	
 	//---------------------------------------- private static function -----------------------------------------------
-	
 	
 	/**
 	 * トークンからGoogleIDを抽出する

@@ -1,5 +1,4 @@
 <?php
-
 require_once 'ak_core/AK_BaseController.php';
 
 require_once 'AK_Config.php';
@@ -14,6 +13,7 @@ require_once 'AK_DateTime.php';
 require_once 'AK_Service.php';
 require_once 'AK_Ssh.php';
 require_once 'AK_Google.php';
+require_once 'AK_Aws.php';
 
 class AK_Core {
 
