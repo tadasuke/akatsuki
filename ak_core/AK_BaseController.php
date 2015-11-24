@@ -69,6 +69,7 @@ abstract class AK_BaseController {
 	 */
 	private $requestParamArray = NULL;
 	public function getRequestParam( $key = NULL ) {
+		
 		if ( is_null( $this -> requestParamArray ) === TRUE ) {
 			$this -> setRequestParamArray();
 		} else {

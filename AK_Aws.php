@@ -1,6 +1,7 @@
 <?php
 
-require_once 'ak_aws/AK_Mail.class.php';
+require_once 'ak_aws/AK_Ses.class.php';
+require_once 'ak_aws/AK_Sqs.class.php';
 
 abstract class AK_Aws {
 	
@@ -11,14 +12,22 @@ abstract class AK_Aws {
 	protected $awsParamArray = NULL;
 	
 	/**
+	 * AWS設定配列
+	 * @var array $awsConfigArray
+	 */
+	protected $awsConfigArray = NULL;
+	
+	/**
 	 * コンストラクタ
 	 */
-	public function __construct( $awsConfigArray ) {
+	protected function __construct( $awsConfigArray ) {
 	
+		$this -> awsConfigArray = $awsConfigArray;
+		
 		// AWSパラメータを設定
 		$this -> awsParamArray = [
-			'version'     => 'latest',
-			'region'      => 'us-east-1',
+			'version' => 'latest',
+			'region'  => $awsConfigArray['default_region'],
 			'credentials' => [
 				'key'    => $awsConfigArray['access_key'],
 				'secret' => $awsConfigArray['secret_access_key'],

@@ -5,7 +5,21 @@
  * @author tadasuke
  *
  */
-class AK_Mail extends AK_Aws {
+class AK_Ses extends AK_Aws {
+	
+	/**
+	 * インスタンス取得
+	 * @var AK_Ses
+	 */
+	private static $instance = NULL;
+	public static function getInstance( $awsConfigArray ) {
+		if ( is_null( self::$instance ) === TRUE ) {
+			self::$instance = new self( $awsConfigArray );
+		} else {
+			;
+		}
+		return self::$instance;
+	}
 	
 	/**
 	 * SESクライアント
@@ -54,7 +68,7 @@ class AK_Mail extends AK_Aws {
 	 * コンストラクタ
 	 * @param array $awsConfigArray
 	 */
-	public function __construct( $awsConfigArray ) {
+	protected function __construct( $awsConfigArray ) {
 		
 		parent::__construct( $awsConfigArray );
 		$this -> sesClient = new \Aws\Ses\SesClient( $this -> awsParamArray );
@@ -78,19 +92,6 @@ class AK_Mail extends AK_Aws {
 		} else {
 			$toAddressArray = $toMailAddress;
 		}
-	
-	
-// 		// 送信アドレス配列を作成
-// 		$toAddressArray = [];
-// 		if ( strcmp( $userBean -> getNoticeMailAddressType(), NOTICE_MAIL_ADDRESS_TYPE_SUB ) == 0 ) {
-// 			$toAddressArray[] = $userBean -> getSubMailAddress();
-// 		} else if ( strcmp( $userBean -> getNoticeMailAddressType(), NOTICE_MAIL_ADDRESS_TYPE_SUB_GMAIL ) == 0 ) {
-// 			$toAddressArray[] = $userBean -> getSubMailAddress();
-// 			$toAddressArray[] = $userBean -> getGmailAddress();
-// 		} else {
-// 			;
-// 		}
-
 	
 		foreach ( $toAddressArray as $toAddress ) {
 				
