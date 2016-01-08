@@ -77,7 +77,8 @@ class AK_Dao {
 			$columnMeta = $sth -> getColumnMeta( $i );
 			$columnType = $columnMeta['native_type'];
 			
-			if ( strcmp( $columnType, 'DATETIME' ) == 0 || strcmp( $columnType, 'TIMESTAMP' ) == 0 ) {
+			//if ( strcmp( $columnType, 'DATETIME' ) == 0 || strcmp( $columnType, 'TIMESTAMP' ) == 0 ) {
+			if ( strcmp( $columnType, 'DATETIME' ) == 0 || strcmp( $columnType, 'TIMESTAMP' ) == 0 || strcmp( $columnType, 'DATE' ) == 0 ) {
 				$datetimeColumnNameArray[] = $columnMeta['name'];
 			} else {
 				;
