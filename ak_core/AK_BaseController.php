@@ -387,19 +387,25 @@ abstract class AK_BaseController {
 			;
 		}
 		
-		// POST対応
-		if ( AK_Core::getPostParamValidFlg() === TRUE ) {
-			foreach ( $this -> postParam as $key => $value ) {
+		// リクエストボディ対応
+		$requestBodyParamFlg = FALSE;
+		if ( AK_Core::getRequestBodyParamValidFlg() === TRUE ) {
+			foreach ( $this -> requestBodyParam as $key => $value ) {
+				$requestBodyParamFlg = TRUE;
 				$requestParamArray[$key] = $value;
 			}
 		} else {
 			;
 		}
 		
-		// リクエストボディ対応
-		if ( AK_Core::getRequestBodyParamValidFlg() === TRUE ) {
-			foreach ( $this -> requestBodyParam as $key => $value ) {
-				$requestParamArray[$key] = $value;
+		// POST対応(ボディから値が取得できなかった場合のみ)
+		if ( $requestBodyParamFlg === FALSE ) {
+			if ( AK_Core::getPostParamValidFlg() === TRUE ) {
+				foreach ( $this -> postParam as $key => $value ) {
+					$requestParamArray[$key] = $value;
+				}
+			} else {
+				;
 			}
 		} else {
 			;
