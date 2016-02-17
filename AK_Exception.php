@@ -10,3 +10,5 @@ class AK_Excepiton extends Exception{
 	}
 	
 }
+
+class AK_NoControllerException extends AK_Excepiton {}

@@ -37,6 +37,12 @@ class AK_Sqs extends AK_Aws {
 	}
 	
 	/**
+	 * 送信キュー配列
+	 * @var array
+	 */
+	private $sendQueArray = [];
+	
+	/**
 	 * コンストラクタ
 	 * @param array $awsConfigArray
 	 */
@@ -48,15 +54,68 @@ class AK_Sqs extends AK_Aws {
 	
 	}
 	
+	/**
+	 * デストラクタ
+	 */
+	public function __destruct() {
+		
+		// 10通ずつまとめて送る
+		$sendQueArray = array_chunk( $this -> sendQueArray, 10 );
+		
+		foreach ( $sendQueArray as $queArray ) {
+			
+			$paramArray = [
+				'QueueUrl' => $this -> queUrl,
+				'Entries'  => [],
+			];
+			
+			foreach ( $queArray as $key => $que ) {
+				$paramArray['Entries'][] = [
+					'Id' => $key + 1,
+					'MessageBody' => $que,
+				];
+			};
+			
+			$this -> sqsClient -> sendMessageBatch( $paramArray );
+			
+		}
+		
+	}
 	
-	public function sendQue() {
+	
+	/**
+	 * キュー送信
+	 * @param string $message
+	 */
+	public function sendQue( $message ) {
+		$this -> sendQueArray[] = $message;
+	}
+	
+	/**
+	 * キュー取得
+	 */
+	public function receiveQue( $getQueCount = 1 ) {
 		
 		$queArray = [
-			'QueueUrl'    => $this -> queUrl,
-		    'MessageBody' => 'TADSUKE!!!!',
+			'QueueUrl' => $this -> queUrl,
+			'MaxNumberOfMessages' => $getQueCount,
 		];
+		$result = $this -> sqsClient -> receiveMessage( $queArray );
+		return $result;
 		
-		$this -> sqsClient -> sendMessage( $queArray );
+	}
+	
+	/**
+	 * キュー削除
+	 * @param string $receiptHandle
+	 */
+	public function deleteQue( $receiptHandle ) {
+		
+		$queArray = [
+			'QueueUrl' => $this -> queUrl,
+			'ReceiptHandle' => $receiptHandle,
+		];
+		$this -> sqsClient -> deleteMessage( $queArray );
 		
 	}
 	
