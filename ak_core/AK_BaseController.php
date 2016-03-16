@@ -170,6 +170,31 @@ abstract class AK_BaseController {
 		$this -> jsonEncodeFlg = $jsonEncodeFlg;
 	}
 	
+	/**
+	 * lzf圧縮フラグ
+	 * @var boolean
+	 */
+	private $lzfFlg = FALSE;
+	public function setLzfFlg( $lzfFlg ) {
+		$this -> lzfFlg = $lzfFlg;
+	}
+	
+	/**
+	 * メッセージパックフラグ
+	 * @var boolean
+	 */
+	private $messagePackFlg = FALSE;
+	public function setMessagePackFlg( $messagePackFlg ) {
+		$this -> messagePackFlg = $messagePackFlg;
+		
+		if ( $this -> messagePackFlg === TRUE ) {
+			$this -> responseType = self::RESPONSE_TYPE_MSGPACK;
+		} else {
+			;
+		}
+		
+	}
+	
 	//---------------------------------- public ----------------------------------
 	
 	/**
@@ -215,6 +240,7 @@ abstract class AK_BaseController {
 		
 			// レスポンスパラメータが存在した場合
 			if ( count( $this -> responseParam ) > 0 ) {
+				
 				// レスポンスタイプがJSON形式の場合
 				if ( $this -> responseType == self::RESPONSE_TYPE_JSON ) {
 					if ( $this -> jsonEncodeFlg === TRUE ) {
@@ -226,26 +252,61 @@ abstract class AK_BaseController {
 					header( 'X-Content-Type-Options: nosniff' );
 					header( $contentType );
 					
+					if ( $this -> lzfFlg === TRUE ) {
+						$response = lzf_compress( $response );
+						header( 'X-MORI-LZF: 1' );
+					} else {
+						;
+					}
+					
 					echo( $response );
+					
 				// レスポンスタイプがJSONP形式の場合
 				} else if ( $this -> responseType == self::RESPONSE_TYPE_JSONP ) {
 					$response = json_encode( $this -> responseParam );
 					$contentType = $this -> contentType ?: self::DEFAULT_JSONP_CONTENT_TYPE;
 					header( 'X-Content-Type-Options: nosniff' );
 					header( $contentType );
+					
+					if ( $this -> lzfFlg === TRUE ) {
+						$response = lzf_compress( $response );
+						header( 'X-MORI-LZF: 1' );
+					} else {
+						;
+					}
+					
 					echo( $this -> callback . '(' . $response . ')' );
+					
 				// レスポンスタイプがDATAの場合
 				} else if ( $this -> responseType == self::RESPONSE_TYPE_DATA ) {
 					$response = $this -> responseParam[0];
 					$contentType = $this -> contentType ?: self::DEFALUT_DATA_CONTENT_TYPE;
 					header( $contentType );
+					
+					if ( $this -> lzfFlg === TRUE ) {
+						$response = lzf_compress( $response );
+						header( 'X-MORI-LZF: 1' );
+					} else {
+						;
+					}
+					
 					echo( $response );
+					
 				// レスポンスタイプがMessagePackの場合
 				} else if ( $this -> responseType == self::RESPONSE_TYPE_MSGPACK ) {
 					$response = msgpack_serialize( $this -> responseParam );
 					$contentType = $this -> contentType ?: self::DEFAULT_MSGPACK_CONTENT_TYPE;
 					header( 'X-Content-Type-Options: nosniff' );
+					header( 'X-MORI-MP: 1' );
 					header( $contentType );
+					
+					if ( $this -> lzfFlg === TRUE ) {
+						$response = lzf_compress( $response );
+						header( 'X-MORI-LZF: 1' );
+					} else {
+						;
+					}
+					
 					echo( $response );
 				} else {
 					;
@@ -355,8 +416,22 @@ abstract class AK_BaseController {
 		$requestBody = file_get_contents( 'php://input' );
 		
 		if ( strlen( $requestBody ) > 0 ) {
+
+			// lzf圧縮されていた場合は解凍
+			if ( $this -> lzfFlg === TRUE ) {
+				$requestBody = lzf_decompress( $requestBody );
+			} else {
+				;
+			}
 		
-			$array = json_decode( $requestBody, TRUE );
+			// メッセージパックを利用する場合
+			if ( $this -> messagePackFlg === TRUE ) {
+				$array = msgpack_unserialize( $requestBody );
+			// メッセージパックを利用しない場合
+			} else {
+				$array = json_decode( $requestBody, TRUE );
+			}
+			
 			if ( is_null( $array ) === FALSE ) {
 				foreach ( $array as $key => $value ) {
 					$requestParamArray[$key] = $value;

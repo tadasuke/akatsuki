@@ -137,11 +137,8 @@ class AK_Goole {
 	 */
 	public function googleOAuth() {
 		
-		AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'START' );
-		
 		// 既に認証済の場合は何もしない
 		if ( $this -> googleOAuthFlg === TRUE ) {
-			AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'END' );
 			return;
 		} else {
 			;
@@ -249,8 +246,6 @@ class AK_Goole {
 	 */
 	private function setGoogleClient() {
 		
-		AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'START' );
-		
 		$googleClient = new Google_Client();
 		$googleClient -> setClientId( $this -> clientId );
 		$googleClient -> setClientSecret( $this -> clientSecret );
@@ -260,11 +255,8 @@ class AK_Goole {
 		//$googleClient -> setApprovalPrompt( 'force' );
 		
 		$this -> googleClient = $googleClient;
-		AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'END' );
 		
 	}
-	
-	
 	
 	
 	//---------------------------------------- private static function -----------------------------------------------
