@@ -229,7 +229,7 @@ class AK_Core {
 			$controllerFileName = $this -> controllerDir . '/' . $this -> moduleName . '/' . $this -> controllerName . '.php';
 		}
 		if ( file_exists( $controllerFileName ) === FALSE ) {
-			throw new AK_Excepiton( '', 'controller_file_no_exists:' . $controllerFileName, __FILE__, __LINE__ );
+			throw new AK_NoControllerException( '', 'controller_file_no_exists:' . $controllerFileName, __FILE__, __LINE__ );
 		} else {
 			;
 		}

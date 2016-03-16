@@ -189,10 +189,20 @@ class AK_Goole {
 	 */
 	public function getProfileImageUrl( $userId = 'me' ) {
 		
-		AK_Log::getLogClass() -> log( AK_Log::INFO, __METHOD__, __LINE__, 'START' );
-		
 		$plus = new Google_Service_Plus( $this -> getGoogleClient() );
-		$imageUrl = $plus -> people -> get( $userId ) -> getImage() -> getUrl();
+		
+		try {
+			$people = $plus -> people -> get( $userId );
+		}
+		catch ( Exception $e ) {
+			return NULL;
+		}
+		
+		$imageUrl = $people -> getImage() -> getUrl();
+		
+		// パラメータを除去
+		list($imageUrl) = explode( '?', $imageUrl );
+		
 		return $imageUrl;
 		
 	}
