@@ -180,6 +180,15 @@ abstract class AK_BaseController {
 	}
 	
 	/**
+	 * lz4圧縮フラグ
+	 * @var boolean
+	 */
+	private $lz4Flg = FALSE;
+	public function setLz4Flg( $lz4Flg ) {
+		$this -> lz4Flg = $lz4Flg;
+	}
+	
+	/**
 	 * メッセージパックフラグ
 	 * @var boolean
 	 */
@@ -252,12 +261,7 @@ abstract class AK_BaseController {
 					header( 'X-Content-Type-Options: nosniff' );
 					header( $contentType );
 					
-					if ( $this -> lzfFlg === TRUE ) {
-						$response = lzf_compress( $response );
-						header( 'X-MORI-LZF: 1' );
-					} else {
-						;
-					}
+					$response = $this -> compressResponse( $response );
 					
 					echo( $response );
 					
@@ -268,12 +272,7 @@ abstract class AK_BaseController {
 					header( 'X-Content-Type-Options: nosniff' );
 					header( $contentType );
 					
-					if ( $this -> lzfFlg === TRUE ) {
-						$response = lzf_compress( $response );
-						header( 'X-MORI-LZF: 1' );
-					} else {
-						;
-					}
+					$response = $this -> compressResponse( $response );
 					
 					echo( $this -> callback . '(' . $response . ')' );
 					
@@ -283,12 +282,7 @@ abstract class AK_BaseController {
 					$contentType = $this -> contentType ?: self::DEFALUT_DATA_CONTENT_TYPE;
 					header( $contentType );
 					
-					if ( $this -> lzfFlg === TRUE ) {
-						$response = lzf_compress( $response );
-						header( 'X-MORI-LZF: 1' );
-					} else {
-						;
-					}
+					$response = $this -> compressResponse( $response );
 					
 					echo( $response );
 					
@@ -300,12 +294,7 @@ abstract class AK_BaseController {
 					header( 'X-MORI-MP: 1' );
 					header( $contentType );
 					
-					if ( $this -> lzfFlg === TRUE ) {
-						$response = lzf_compress( $response );
-						header( 'X-MORI-LZF: 1' );
-					} else {
-						;
-					}
+					$response = $this -> compressResponse( $response );
 					
 					echo( $response );
 				} else {
@@ -423,6 +412,13 @@ abstract class AK_BaseController {
 			} else {
 				;
 			}
+			
+			// lz4圧縮されていた場合は解凍
+			if ( $this -> lz4Flg === TRUE ) {
+				$requestBody = lz4_uncompress( $requestBody );
+			} else {
+				;
+			}
 		
 			// メッセージパックを利用する場合
 			if ( $this -> messagePackFlg === TRUE ) {
@@ -496,6 +492,30 @@ abstract class AK_BaseController {
 		}
 		
 		$this -> requestParamArray = $requestParamArray;
+		
+	}
+	
+	/**
+	 * レスポンス圧縮
+	 * @param string $response
+	 */
+	private function compressResponse( $response ) {
+		
+		if ( $this -> lzfFlg === TRUE ) {
+			$response = lzf_compress( $response );
+			header( 'X-MORI-LZF: 1' );
+		} else {
+				;
+		}
+					
+		if ( $this -> lz4Flg === TRUE ) {
+			$response = lz4_compress ( $response );
+			header( 'X-MORI-LZ4: 1' );
+		} else {
+			;
+		}
+		
+		return $response;
 		
 	}
 	

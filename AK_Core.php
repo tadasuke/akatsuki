@@ -186,6 +186,15 @@ class AK_Core {
 	}
 	
 	/**
+	 * lz4圧縮フラグ
+	 * @var boolean $lz4Flg
+	 */
+	private $lz4Flg = FALSE;
+	public function setLz4Flg( $lz4Flg ) {
+		$this -> lz4Flg = $lz4Flg;
+	}
+	
+	/**
 	 * メッセージパックフラグ
 	 * @var boolean
 	 */
@@ -240,6 +249,7 @@ class AK_Core {
 		$this -> requestObj -> setActionName( $this -> actionName );
 		$this -> requestObj -> setResponseFlg( $this -> responseFlg );
 		$this -> requestObj -> setLzfFlg( $this -> lzfFlg );
+		$this -> requestObj -> setLz4Flg( $this -> lz4Flg );
 		$this -> requestObj -> setMessagePackFlg( $this -> messagePackFlg );
 		
 		// 初期処理
