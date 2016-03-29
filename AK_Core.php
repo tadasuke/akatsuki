@@ -111,6 +111,26 @@ class AK_Core {
 	}
 	
 	/**
+	 * 置換コントローラ名
+	 * @var string
+	 */
+	private static $replaceControllerName = NULL;
+	public static function setReplaceControllerName( $replaceControllerName ) {
+		self::$replaceControllerName = $replaceControllerName;
+	}
+	public static function getReplaceControllerName() {
+		return self::$replaceControllerName;
+	}
+	
+	private static $replaceActionName = NULL;
+	public static function setReplaceActionName( $replaceActionName ) {
+		self::$replaceActionName = $replaceActionName;
+	}
+	public static function getReplaceActionName() {
+		return self::$replaceActionName;
+	}
+	
+	/**
 	 * インスタンス
 	 * @var AK_Core
 	 */
@@ -210,6 +230,21 @@ class AK_Core {
 		} else {
 			$controllerFileName = $this -> controllerDir . '/' . $this -> moduleName . '/' . $this -> controllerName . '.php';
 		}
+		
+		// コントローラファイルが存在しなかった場合
+		if ( file_exists( $controllerFileName ) === FALSE ) {
+			// 置換コントローラファイルが設定されていた場合
+			if ( is_null( self::$replaceControllerName ) === FALSE ) {
+				$controllerFileName = $this -> controllerDir . '/' . self::$replaceControllerName . '.php';
+				$this -> controllerName = self::$replaceControllerName;
+				$this -> actionName = self::$replaceActionName;
+			} else {
+				;
+			}
+		} else {
+			;
+		}
+		
 		if ( file_exists( $controllerFileName ) === FALSE ) {
 			throw new AK_NoControllerException( '', 'controller_file_no_exists:' . $controllerFileName, __FILE__, __LINE__ );
 		} else {

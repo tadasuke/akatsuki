@@ -200,8 +200,8 @@ class AK_Gadget {
 	 * @param string $string
 	 * @return string
 	 */
-	public static function deleteLastWord( $string ) {
-		return substr( $string, 0, strlen( $string ) - 1 );
+	public static function deleteLastWord( $string, $deleteWordCount = 1 ) {
+		return substr( $string, 0, strlen( $string ) - $deleteWordCount );
 	}
 	
 	
