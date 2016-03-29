@@ -197,6 +197,33 @@ class AK_Core {
 	}
 	
 	/**
+	 * lzf圧縮フラグ
+	 * @var boolean
+	 */
+	private $lzfFlg = FALSE;
+	public function setLzfFlg( $lzfFlg ) {
+		$this -> lzfFlg = $lzfFlg;
+	}
+	
+	/**
+	 * lz4圧縮フラグ
+	 * @var boolean $lz4Flg
+	 */
+	private $lz4Flg = FALSE;
+	public function setLz4Flg( $lz4Flg ) {
+		$this -> lz4Flg = $lz4Flg;
+	}
+	
+	/**
+	 * メッセージパックフラグ
+	 * @var boolean
+	 */
+	private $messagePackFlg = FALSE;
+	public function setMessagePackFlg( $messagePackFlg ) {
+		$this -> messagePackFlg = $messagePackFlg;
+	}
+	
+	/**
 	 * インスタンス取得
 	 * @return AK_core
 	 */
@@ -256,6 +283,9 @@ class AK_Core {
 		$this -> requestObj -> setControllerName( $this -> controllerName );
 		$this -> requestObj -> setActionName( $this -> actionName );
 		$this -> requestObj -> setResponseFlg( $this -> responseFlg );
+		$this -> requestObj -> setLzfFlg( $this -> lzfFlg );
+		$this -> requestObj -> setLz4Flg( $this -> lz4Flg );
+		$this -> requestObj -> setMessagePackFlg( $this -> messagePackFlg );
 		
 		// 初期処理
 		if ( call_user_func( array( $this -> requestObj, 'initial' ), $this -> userParamArray ) === FALSE ) {
