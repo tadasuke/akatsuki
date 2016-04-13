@@ -300,4 +300,15 @@ class AK_Gadget {
 		
 	}
 	
+	/**
+	 * 改行コードを置換する
+	 * @param string $string
+	 * @param string $to
+	 */
+	public static function convertEOL( $string, $to = PHP_EOL ) {
+		
+		return preg_replace( "/\r\n|\r|\n/", $to, $string );
+		
+	}
+	
 }
