@@ -306,9 +306,15 @@ class AK_Gadget {
 	 * @param string $to
 	 */
 	public static function convertEOL( $string, $to = PHP_EOL ) {
-		
 		return preg_replace( "/\r\n|\r|\n/", $to, $string );
-		
+	}
+	
+	/**
+	 * 日付文字列チェック
+	 * @param unknown $datetime
+	 */
+	public static function checkDatetimeFormat( $datetime, $format = 'YmdHis' ){
+	    return $datetime === date( $format, strtotime( $datetime ) );
 	}
 	
 }

@@ -145,7 +145,12 @@ class AK_Goole {
 		}
 		
 		// セッションからトークンが取得できなかった場合
-		session_start();
+		if ( session_status() !== PHP_SESSION_ACTIVE ) {
+			session_start();
+		} else {
+			;
+		}
+		
 		if ( isset( $_SESSION[$this -> sessionId] ) === FALSE ) {
 			
 			// トークン設定
@@ -213,11 +218,22 @@ class AK_Goole {
 	 */
 	public function getGoogleTokenByCode() {
 	
+		// セッションが有効でなければセッションスタート
+		if ( session_status() !== PHP_SESSION_ACTIVE ) {
+			session_start();
+		} else {
+			;
+		}
+		
 		// GETパラメータにcodeが設定されていない場合
 		if ( isset( $_GET['code'] ) === FALSE ) {
 				
 			// リダイレクトが許可されている場合は、認証URLにリダイレクト
 			if ( $this -> permitRedirectFlg === TRUE ) {
+				
+				// ログインしていなかった場合にgoogle認証後の戻りURLにリクエストされたURLを入れるため一時保存
+				$_SESSION['request_uri'] = $_SERVER['REQUEST_URI'];
+				
 				// 認証URLを作成
 				$authUrl = $this -> getGoogleClient() -> createAuthUrl();
 
@@ -230,7 +246,7 @@ class AK_Goole {
 				return FALSE;
 			}
 				
-			// GETパラメータにcodeが設定されていた場合
+		// GETパラメータにcodeが設定されていた場合
 		} else {
 				
 			// アクセストークンを取得
@@ -240,7 +256,13 @@ class AK_Goole {
 			$_SESSION[$this -> sessionId] = $this -> googleClient -> getAccessToken();
 				
 			// コールバックURLにリダイレクト(codeのパラメータを隠すため)
-			header( 'Location:' . $this -> getCallbackUrl() );
+			if ( isset( $_SESSION['request_uri'] ) === TRUE ) {
+				$url = $_SESSION['request_uri'];
+			} else {
+				$url = $this -> getCallbackUrl();
+			}
+			//header( 'Location:' . $this -> getCallbackUrl() );
+			header( 'Location:' . $url );
 			exit;
 				
 		}
