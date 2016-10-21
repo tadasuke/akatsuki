@@ -77,6 +77,7 @@ class AK_Log {
 		// ログ出力先ディレクトリが存在しなければ作成
 		if ( self::$useSyslogFlg === FALSE ) {
 			if ( file_exists( $baseDir ) === FALSE ) {
+				
 				mkdir( $baseDir );
 				
 				// ファイルパーミッションが指定されていた場合

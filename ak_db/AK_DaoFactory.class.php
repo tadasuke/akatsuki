@@ -37,7 +37,7 @@ class AK_DaoFactory{
 		} else {
 			;
 		}
-		
+
 		return self::$daoArray[$dbIdemtificationName];
 	}
 	
