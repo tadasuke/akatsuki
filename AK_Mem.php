@@ -6,225 +6,249 @@ require_once 'ak_mem/AK_MemConfig.php';
  * Memcacheクラス
  * @author TADASUKE
  */
-class AK_Mem extends Memcache{
-	
+class AK_Mem extends Memcached
+{
+
 	const DEFAULT_PORT = 11211;
 	const DEFAULT_KEEP_TIME = 0;
-	
+
 	const GET_TYPE_VARIABLE = 1;
 	const GET_TYPE_MEMCACHE = 2;
-	
+
 	const DEFAULT_MEM_IDENTIFICATION_NAME = 'ak_mem';
-	
-	/**
-	 * 圧縮フラグ
-	 * @var int
-	 */
-	private static $compressedFlg = NULL;
-	public static function setCompressedFlg( $compressedFlg ) {
-		self::$compressedFlg = $compressedFlg;
-	}
-	public static function getCompressedFlg() {
-		return self::$compressedFlg;
-	}
-	
+
 	/**
 	 * 自動コミットフラグ
 	 * @var boolean
 	 */
 	private static $autoCommitFlg = FALSE;
-	public static function setAutoCommitFlg( $autoCommitFlg ) {
+
+	public static function setAutoCommitFlg( $autoCommitFlg )
+	{
 		self::$autoCommitFlg = $autoCommitFlg;
 	}
-	public static function getAutoCommitFlg() {
+
+	public static function getAutoCommitFlg()
+	{
 		return self::$autoCommitFlg;
 	}
-	
+
 	/**
 	 * デフォルト保持秒数
 	 * @var int
 	 */
 	private $defaultKeepTime = self::DEFAULT_KEEP_TIME;
-	public function setDefaultKeepTime( $defaultKeepTime ) {
-		$this -> defaultKeepTime = $defaultKeepTime;
+
+	public function setDefaultKeepTime( $defaultKeepTime )
+	{
+		$this->defaultKeepTime = $defaultKeepTime;
 	}
-	public function getDefaultKeepTime() {
-		return $this -> defaultKeepTime;
+
+	public function getDefaultKeepTime()
+	{
+		return $this->defaultKeepTime;
 	}
-	
+
 	/**
 	 * インスタンス配列
 	 * @var array[AK_Mem]
 	 */
-	protected static $instanceArray = array();
-	public static function getInstanceArray() {
+	protected static $instanceArray = array ();
+
+	public static function getInstanceArray()
+	{
 		return self::$instanceArray;
 	}
-	
+
 	/**
 	 * 値配列
 	 * @var array
 	 */
-	private $valueArray = array();
-	
+	private $valueArray = array ();
+
 	/**
 	 * 獲得タイプ
 	 * @var int
 	 */
 	private $getType = NULL;
-	public function getGetType() {
-		return $this -> getType;
+
+	public function getGetType()
+	{
+		return $this->getType;
 	}
-	
+
 	/**
 	 * Memcache識別子
 	 * @var string
 	 */
 	private $identificationName = NULL;
-	public function getIdentificationName() {
-		return $this -> identificationName;
+
+	public function getIdentificationName()
+	{
+		return $this->identificationName;
 	}
-	
+
 	/**
 	 * インスタンス設定
 	 * @param mixed $config
+	 * @param string $identificationName
 	 * @return AK_Mem
 	 */
-	public static function setInstance( $config, $identificationName = self::DEFAULT_MEM_IDENTIFICATION_NAME ) {
+	public static function setInstance( $config, $identificationName = self::DEFAULT_MEM_IDENTIFICATION_NAME )
+	{
 		return self::$instanceArray[$identificationName] = new self( $identificationName, $config );
 	}
-	
+
 	/**
 	 * インスタンス取得
 	 * @param mixed
 	 * @return AK_Mem
 	 */
-	public static function getInstance( $identificationName = self::DEFAULT_MEM_IDENTIFICATION_NAME ) {
+	public static function getInstance( $identificationName = self::DEFAULT_MEM_IDENTIFICATION_NAME )
+	{
 		return self::$instanceArray[$identificationName];
 	}
-	
+
 	//-------------------------- コンストラクタ -----------------------------
-	
+
 	/**
 	 * コンストラクタ
-	 * @param mixed
+	 * @param string $identificationName
+	 * @param AK_MemConfig $akMemConfig
 	 */
-	protected function __construct( $identificationName, $akMemConfig ) {
-		$this -> identificationName = $identificationName;
-		$this -> _addServer( $akMemConfig );
+	public function __construct( $identificationName, AK_MemConfig $akMemConfig )
+	{
+		$this->identificationName = $identificationName;
+		$this->_addServer( $akMemConfig );
 	}
-	
+
 	//---------------------------- デストラクタ ------------------------------
-	
+
 	/**
 	 * デストラクタ
 	 */
-	public function __destruct() {
-		if ( self::$autoCommitFlg === TRUE ) {
-			$this -> commit();
+	public function __destruct()
+	{
+		if ( self::$autoCommitFlg === TRUE ){
+			$this->commit();
 		} else {
 			;
 		}
 	}
-	
-	
+
+
 	//--------------------------- public ----------------------------------
-	
+
 	/**
 	 * セット
 	 * @param string $key
 	 * @param mixed $value
 	 * @param int $keepTime
 	 */
-	public function set( $key, $value, $keepTime = NULL ) {
-		$keepTime = $keepTime ?: $this -> defaultKeepTime;
-		
-		$this -> valueArray[$key] = array(
-			  'value'       => $value
-			, 'keep_time'   => $keepTime
-			, 'set_mem_flg' => TRUE
-		);
+	public function set( $key, $value, $keepTime = NULL )
+	{
+		$keepTime = $keepTime ?: $this->defaultKeepTime;
+
+		$this->valueArray[$key] = [
+			'value' => $value,
+			'keep_time' => $keepTime,
+			'set_mem_flg' => TRUE,
+		];
 	}
-	
+
 	/**
 	 * ゲット
 	 * @param string $key
+	 * @param callable $cache_cb [optional]
+	 * @param float $cas_token [optional]
 	 * @return mixed
 	 */
-	public function get( $key ) {
-		if ( isset( $this -> valueArray[$key] ) === FALSE ) {
-			
-			$value = parent::get( $key );
-			
-			$this -> valueArray[$key] = array(
-				  'value'       => $value
-				, 'keep_time'   => 0
-				, 'set_mem_flg' => FALSE
-			);
-			$this -> getType = self::GET_TYPE_MEMCACHE;
+	public function get ($key, $cache_cb = null, $cas_token = null)
+	{
+		if ( isset($this->valueArray[$key]) === FALSE ){
+
+			$value = parent::get( $key, $cache_cb, $cas_token );
+
+			$this->valueArray[$key] = [
+				'value' => $value,
+				'keep_time' => 0,
+				'set_mem_flg' => FALSE,
+			];
+			$this->getType = self::GET_TYPE_MEMCACHE;
 		} else {
-			$value = $this -> valueArray[$key]['value'];
-			$this -> getType = self::GET_TYPE_VARIABLE;
+			$value = $this->valueArray[$key]['value'];
+			$this->getType = self::GET_TYPE_VARIABLE;
 		}
 		return $value;
 	}
-	
+
 	/**
 	 * 削除
 	 * @param string $key
+	 * @param int $time
+	 * @return bool
 	 */
-	public function delete( $key ) {
-		parent::delete( $key );
-		unset( $this -> valueArray[$key] );
+	public function delete( $key, $time = 0 )
+	{
+		$result = parent::delete( $key, $time );
+		unset($this->valueArray[$key]);
+		return $result;
 	}
-	
+
 	/**
 	 * 初期化
+	 * @param int $delay
+	 * @return bool
 	 */
-	public function flush() {
-		parent::flush();
-		$this -> valueArray = array();
+	public function flush( $delay = 0 )
+	{
+		$result = parent::flush( $delay );
+		$this->valueArray = array ();
+		return $result;
 	}
-	
+
 	/**
 	 * 接続先追加
 	 * @param mixed
 	 */
-	public function _addServer( $akMemConfigArray ) {
-	
-		if ( is_array( $akMemConfigArray ) === FALSE ) {
-			$akMemConfigArray = array( $akMemConfigArray );
+	public function _addServer( $akMemConfigArray )
+	{
+
+		if ( is_array( $akMemConfigArray ) === FALSE ){
+			$akMemConfigArray = [$akMemConfigArray];
 		} else {
 			;
 		}
-		
+
 		// Memcacheに接続
 		foreach ( $akMemConfigArray as $akMemConfig ) {
-			$result = parent::addServer( $akMemConfig -> getHostName(), $akMemConfig -> getPort(), FALSE );
+			parent::addServer( $akMemConfig->getHostName(), $akMemConfig->getPort(), FALSE );
 		}
-	
+
 	}
-	
+
 	/**
 	 * コミット
 	 */
-	public function commit() {
-		
-		foreach ( $this -> valueArray as $key => $data ) {
-			
-			if ( $data['set_mem_flg'] === TRUE ) {
-				$result = parent::set( $key, $data['value'], self::$compressedFlg, $data['keep_time'] );
+	public function commit()
+	{
+
+		foreach ( $this->valueArray as $key => $data ) {
+
+			if ( $data['set_mem_flg'] === TRUE ){
+				parent::set( $key, $data['value'], $data['keep_time'] );
 			} else {
 				;
 			}
 		}
 	}
-	
+
 	/**
 	 * ロールバック
 	 */
-	public function rollback() {
-		$this -> valueArray = array();
+	public function rollback()
+	{
+		$this->valueArray = [];
 	}
-	
+
 }
