@@ -188,18 +188,42 @@ class AK_Goole
 				;
 			}
 
-			// セッションからトークンが取得できた場合
+		// セッションからトークンが取得できた場合
 		} else {
 			$this->getGoogleClient()->setAccessToken( $_SESSION[$this->sessionId] );
 		}
 
-		// Gmailアドレス、GoogleユーザID設定
+		//--------------------------------
+		// Googleトークンの期限が切れていた場合
+		//--------------------------------
+		$googleClient = $this->getGoogleClient();
+		if ( $googleClient->getAuth()->isAccessTokenExpired() === TRUE ){
+
+			// リフレッシュトークンを取得
+			$refreshToken = $googleClient->getRefreshToken();
+
+			// リフレッシュトークンが取得できた場合
+			if ( is_null( $refreshToken ) === FALSE ){
+
+				// トークンをリフレッシュ
+				$googleClient->refreshToken( $refreshToken );
+
+			// リフレッシュトークンが取得できなかった場合
+			} else {
+				// Google認証
+				$googleClient->setApprovalPrompt( 'force' );
+				$this->getGoogleTokenByCode();
+			}
+
+		} else {
+			;
+		}
+
+		// トークンからGmailアドレス、GoogleユーザIDを抽出
 		$this->extractGmailAddressGoogleUserId();
 
 		// 認証フラグを立てる
 		$this->googleOAuthFlg = TRUE;
-
-		AK_Log::getLogClass()->log( AK_Log::INFO, __METHOD__, __LINE__, 'END' );
 
 	}
 
@@ -331,8 +355,6 @@ class AK_Goole
 
 		$gmailAddress = $id['email'];
 		$googleUserId = $id['sub'];
-		AK_Log::getLogClass()->log( AK_Log::DEBUG, __METHOD__, __LINE__, '$gmailAddress:' . $gmailAddress );
-		AK_Log::getLogClass()->log( AK_Log::DEBUG, __METHOD__, __LINE__, '$googleUserId:' . $googleUserId );
 
 		$this->gmailAddress = $gmailAddress;
 		$this->googleUserId = $googleUserId;
