@@ -237,7 +237,8 @@ class AK_Dao {
 			, $this -> user
 			, $this -> password
 			, array(
-				  PDO::ATTR_PERSISTENT => FALSE
+				  PDO::ATTR_PERSISTENT => FALSE,
+				  PDO::MYSQL_ATTR_LOCAL_INFILE => TRUE
 			)
 		);
 		$this -> connection -> setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );

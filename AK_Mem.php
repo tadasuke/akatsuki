@@ -119,6 +119,7 @@ class AK_Mem extends Memcached
 	public function __construct( $identificationName, AK_MemConfig $akMemConfig )
 	{
 		$this->identificationName = $identificationName;
+		parent::__construct( $identificationName );
 		$this->_addServer( $akMemConfig );
 	}
 
