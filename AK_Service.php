@@ -1,8 +1,9 @@
 <?php
 
 require_once 'ak_service/AK_Slack.class.php';
+require_once 'ak_service/AK_ChatWork.class.php';
 
-class AK_Servcie {
+class AK_Service {
 	
 	/**
 	 * 通信結果
@@ -30,8 +31,55 @@ class AK_Servcie {
 	public function setPinponDashFlg( $pinponDashFlg ) {
 		$this -> pinponDashFlg = $pinponDashFlg;
 	}
-	
-	
+
+	/**
+	 * チャンネル名
+	 * @var string
+	 */
+	protected $channel = NULL;
+
+	public function setChannel( $channel )
+	{
+		$this->channel = $channel;
+	}
+
+	public function getChannel()
+	{
+		return $this->channel;
+	}
+
+	/**
+	 * リクエストヘッダ配列
+	 * @var array
+	 */
+	protected $requestHeaderArray = [];
+
+	/**
+	 * @param array $requestHeaderArray
+	 */
+	public function setRequestHeaderArray( $requestHeaderArray )
+	{
+		$this->requestHeaderArray = $requestHeaderArray;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getRequestHeaderArray()
+	{
+		return $this->requestHeaderArray;
+	}
+
+	/**
+	 * リクエストヘッダ配列を追加
+	 * @param string $header
+	 */
+	public function addRequestHeader( $header ) {
+
+		$this->requestHeaderArray[] = $header;
+
+	}
+
 	//------------------------------------------- static --------------------------------------------
 	
 	/**
