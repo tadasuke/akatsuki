@@ -1,6 +1,6 @@
 <?php
 
-class AK_Slack extends AK_Service
+class AK_ChatWork extends AK_Service
 {
 
 	/**
@@ -35,7 +35,6 @@ class AK_Slack extends AK_Service
 	{
 		return $this->port;
 	}
-
 
 	/**
 	 * ユーザ名
@@ -88,20 +87,18 @@ class AK_Slack extends AK_Service
 	public function notice( $string )
 	{
 
-		// パラメータ設定
-		$paramArray             = $this->optionArray;
-		$paramArray['text']     = $string;
-		$paramArray['username'] = $this->userName;
-		$paramArray['channel']  = $this->channel;
+		$postDataArray = [
+			'body' => $string,
+		];
 
-		$paramJson = json_encode( $paramArray );
+		$postData = http_build_query( $postDataArray );
 
 		// ピンポンダッシュでない場合はCURLを利用
 		if ( $this->pinponDashFlg === FALSE ){
-			$this->noticeToCurl( $paramJson );
-			// ピンポンダッシュの場合はSocketを利用
+			$this->noticeToCurl( $postData );
+		// ピンポンダッシュの場合はSocketを利用
 		} else {
-			$this->noticeToSocket( $paramJson );
+			$this->noticeToSocket( $postData );
 		}
 
 		return;
@@ -111,9 +108,9 @@ class AK_Slack extends AK_Service
 
 	/**
 	 * ソケットを使って通知
-	 * @param string $paramJson
+	 * @param string $postData
 	 */
-	private function noticeToSocket( $paramJson )
+	private function noticeToSocket( $postData )
 	{
 
 		// URLを分解
@@ -126,12 +123,16 @@ class AK_Slack extends AK_Service
 			'POST /' . $file . ' HTTP/1.1',
 			'Host: ' . $host,
 			'Content-type: application/x-www-form-urlencoded',
-			'Content-length: ' . strlen( $paramJson ) . '',
+			'Content-length: ' . strlen( $postData ) . '',
 		];
 
+		foreach ( $this->requestHeaderArray as $header ) {
+			$request[] = $header;
+		}
+
 		// ソケットオープン
-		$FP = fsockopen( $domain, $this->port );
-		fwrite( $FP, implode( $request, "\r\n" ) . "\r\n\r\n" . $paramJson );
+		$FP = fsockopen( $domain, '443' );
+		fwrite( $FP, implode( $request, "\r\n" ) . "\r\n\r\n" . $postData );
 		fclose( $FP );
 
 	}
@@ -139,17 +140,16 @@ class AK_Slack extends AK_Service
 
 	/**
 	 * CURLを使って通知
-	 * @param string $paramJson
+	 * @param string $postData
 	 */
-	private function noticeToCurl( $paramJson )
+	private function noticeToCurl( $postData )
 	{
 
 		$ch = curl_init( $this->url );
-		curl_setopt( $ch, CURLOPT_PORT, $this->port );
 		curl_setopt( $ch, CURLOPT_POST, TRUE );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, TRUE );
-		curl_setopt( $ch, CURLOPT_HTTPHEADER, [] );
-		curl_setopt( $ch, CURLOPT_POSTFIELDS, $paramJson );
+		curl_setopt( $ch, CURLOPT_HTTPHEADER, $this->requestHeaderArray );
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, $postData );
 		$this->result = curl_exec( $ch );
 		$this->error  = curl_error( $ch );
 
