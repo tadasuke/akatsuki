@@ -141,12 +141,11 @@ class AK_Mem extends Memcached
 	//--------------------------- public ----------------------------------
 
 	/**
-	 * セット
 	 * @param string $key
 	 * @param mixed $value
-	 * @param int $keepTime
+	 * @param null $keepTime
 	 */
-	public function set( $key, $value, $keepTime = NULL )
+	public function _set( $key, $value, $keepTime = NULL )
 	{
 		$keepTime = $keepTime ?: $this->defaultKeepTime;
 
@@ -164,7 +163,7 @@ class AK_Mem extends Memcached
 	 * @param float $cas_token [optional]
 	 * @return mixed
 	 */
-	public function get( $key, $cache_cb = NULL, $cas_token = NULL )
+	public function _get( $key, callable $cache_cb = NULL, &$cas_token = NULL )
 	{
 		if ( isset( $this->valueArray[$key] ) === FALSE ){
 
