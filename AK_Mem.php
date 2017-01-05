@@ -9,7 +9,7 @@ require_once 'ak_mem/AK_MemConfig.php';
 class AK_Mem extends Memcached
 {
 
-	const DEFAULT_PORT = 11211;
+	const DEFAULT_PORT      = 11211;
 	const DEFAULT_KEEP_TIME = 0;
 
 	const GET_TYPE_VARIABLE = 1;
@@ -53,7 +53,7 @@ class AK_Mem extends Memcached
 	 * インスタンス配列
 	 * @var array[AK_Mem]
 	 */
-	protected static $instanceArray = array ();
+	protected static $instanceArray = [];
 
 	public static function getInstanceArray()
 	{
@@ -64,7 +64,7 @@ class AK_Mem extends Memcached
 	 * 値配列
 	 * @var array
 	 */
-	private $valueArray = array ();
+	private $valueArray = [];
 
 	/**
 	 * 獲得タイプ
@@ -151,8 +151,8 @@ class AK_Mem extends Memcached
 		$keepTime = $keepTime ?: $this->defaultKeepTime;
 
 		$this->valueArray[$key] = [
-			'value' => $value,
-			'keep_time' => $keepTime,
+			'value'       => $value,
+			'keep_time'   => $keepTime,
 			'set_mem_flg' => TRUE,
 		];
 	}
@@ -164,20 +164,20 @@ class AK_Mem extends Memcached
 	 * @param float $cas_token [optional]
 	 * @return mixed
 	 */
-	public function get ($key, $cache_cb = null, $cas_token = null)
+	public function get( $key, $cache_cb = NULL, $cas_token = NULL )
 	{
-		if ( isset($this->valueArray[$key]) === FALSE ){
+		if ( isset( $this->valueArray[$key] ) === FALSE ){
 
 			$value = parent::get( $key, $cache_cb, $cas_token );
 
 			$this->valueArray[$key] = [
-				'value' => $value,
-				'keep_time' => 0,
+				'value'       => $value,
+				'keep_time'   => 0,
 				'set_mem_flg' => FALSE,
 			];
-			$this->getType = self::GET_TYPE_MEMCACHE;
+			$this->getType          = self::GET_TYPE_MEMCACHE;
 		} else {
-			$value = $this->valueArray[$key]['value'];
+			$value         = $this->valueArray[$key]['value'];
 			$this->getType = self::GET_TYPE_VARIABLE;
 		}
 		return $value;
@@ -192,7 +192,7 @@ class AK_Mem extends Memcached
 	public function delete( $key, $time = 0 )
 	{
 		$result = parent::delete( $key, $time );
-		unset($this->valueArray[$key]);
+		unset( $this->valueArray[$key] );
 		return $result;
 	}
 
@@ -203,8 +203,8 @@ class AK_Mem extends Memcached
 	 */
 	public function flush( $delay = 0 )
 	{
-		$result = parent::flush( $delay );
-		$this->valueArray = array ();
+		$result           = parent::flush( $delay );
+		$this->valueArray = [];
 		return $result;
 	}
 
