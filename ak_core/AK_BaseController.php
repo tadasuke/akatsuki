@@ -291,7 +291,7 @@ abstract class AK_BaseController {
 					$response = msgpack_serialize( $this -> responseParam );
 					$contentType = $this -> contentType ?: self::DEFAULT_MSGPACK_CONTENT_TYPE;
 					header( 'X-Content-Type-Options: nosniff' );
-					header( 'X-MORI-MP: 1' );
+					header( 'X-BALL-MP: 1' );
 					header( $contentType );
 					
 					$response = $this -> compressResponse( $response );
@@ -503,14 +503,14 @@ abstract class AK_BaseController {
 		
 		if ( $this -> lzfFlg === TRUE ) {
 			$response = lzf_compress( $response );
-			header( 'X-MORI-LZF: 1' );
+			header( 'X-BALL-LZF: 1' );
 		} else {
 				;
 		}
 					
 		if ( $this -> lz4Flg === TRUE ) {
 			$response = lz4_compress ( $response );
-			header( 'X-MORI-LZ4: 1' );
+			header( 'X-BALL-LZ4: 1' );
 		} else {
 			;
 		}
