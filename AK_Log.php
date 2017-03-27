@@ -78,7 +78,7 @@ class AK_Log {
 		if ( self::$useSyslogFlg === FALSE ) {
 			if ( file_exists( $baseDir ) === FALSE ) {
 				
-				mkdir( $baseDir );
+				mkdir( $baseDir, 0777, TRUE );
 				
 				// ファイルパーミッションが指定されていた場合
 				if ( is_null( self::$logFilePermission ) === FALSE ) {

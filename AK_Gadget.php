@@ -213,6 +213,21 @@ class AK_Gadget {
 	public static function camel2snake( $camelString ) {
 		return strToLower( preg_replace( '/([a-z])([A-Z])/', "$1_$2", $camelString ) );
 	}
+
+
+	/**
+	 * スネークケースの文字列をアッパーキャメルケースの文字列に変換する
+	 * @param string $string
+	 * @return mixed
+	 */
+	public static function snake2upperCamel( $string )
+	{
+		$string = strtolower( $string );
+		$string = str_replace( '_', ' ', $string );
+		$string = ucwords( $string);
+		$string = str_replace( ' ', '', $string );
+		return $string;
+	}
 	
 	
 	/**
