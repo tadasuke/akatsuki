@@ -3,15 +3,6 @@
 class AK_DbConfig {
 	
 	/**
-	 * データベース名
-	 * @var string
-	 */
-	private $databaseName = NULL;
-	public function getDatabaseName() {
-		return $this -> databaseName;
-	}
-	
-	/**
 	 * ホスト
 	 * @var string
 	 */
@@ -49,13 +40,16 @@ class AK_DbConfig {
 	
 	//--------------------------------- コンストラクタ --------------------------------
 	
-	public function __construct( $databaseName, $host, $user, $password ) {
-		$this -> databaseName = $databaseName;
-		$this -> host         = $host;
-		$this -> user         = $user;
-		$this -> password     = $password;
-		$this -> dsn          = 'mysql:dbname=' . $databaseName . ';host=' . $host;
+	public function __construct( $host, $user, $password, $dbName = NULL ) {
+		$this->host     = $host;
+		$this->user     = $user;
+		$this->password = $password;
+		$this->dsn      = 'mysql:host=' . $host;
+
+		if ( is_null( $dbName ) === FALSE ) {
+			$this->dsn .= ';dbname=' . $dbName;
+		}	
+
 	}
-	
 	
 }

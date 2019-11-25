@@ -157,22 +157,158 @@ class AK_Gadget {
 	 * @param array $arrayB
 	 */
 	public static function isMatchArray( array $arrayA, array $arrayB ) {
-		
-		/*
-		$result = FALSE;
-		foreach ( $arrayA as $a ) {
-			if ( in_array( $a, $arrayB ) === TRUE ) {
-				$result = TRUE;
-				break;
-			} else {
-				;
-			}
-		}
-		*/
-		
+				
 		$result = (count( array_intersect( $arrayA, $arrayB ) ) > 0) ? TRUE : FALSE;
 		
 		return $result;
 		
 	}
+	
+	
+	/**
+	 * ファイルオーナー名取得
+	 * @param string $fileName
+	 */
+	public static function getFileOwnerName( $fileName ) {
+		
+		// ファイルのユーザIDを取得
+		$uid = fileowner( $fileName );
+		if ( $uid === FALSE ) {
+			return NULL;
+		} else {
+			;
+		}
+		// ユーザ情報を取得
+		$userInfoArray = posix_getpwuid( $uid );
+		return $userInfoArray['name'];
+		
+	}
+	
+	
+	/**
+	 * 最後の文字を返す(マルチバイト文字不可)
+	 * @param string $string
+	 * @return char
+	 */
+	public static function getLastChara( $string ) {
+		return substr( $string, strlen( $string ) - 1 );
+	}
+	
+	
+	/**
+	 * 最後の文字を削除する
+	 * @param string $string
+	 * @return string
+	 */
+	public static function deleteLastWord( $string, $deleteWordCount = 1 ) {
+		return substr( $string, 0, strlen( $string ) - $deleteWordCount );
+	}
+	
+	
+	/**
+	 * キャメルケースの文字列をスネークケースの文字列に変換する
+	 * @param unknown $camelString
+	 * @return string
+	 */
+	public static function camel2snake( $camelString ) {
+		return strToLower( preg_replace( '/([a-z])([A-Z])/', "$1_$2", $camelString ) );
+	}
+	
+	
+	/**
+	 * 配列の中のintをstringにする
+	 * @param array $array
+	 */
+	public static function int2stringByArray( array $array ) {
+		
+		$responseArray = array();
+		foreach ( $array as $key => $value ) {
+			
+			// 値が配列の場合
+			if ( is_array( $value ) === TRUE ) {
+				$responseArray[$key] = self::int2stringByArray( $value );
+			// 値がintの場合
+			} else if ( is_int( $value ) === TRUE ) {
+				$responseArray[$key] = (string)$value;
+			} else {
+				$responseArray[$key] = $value;
+			}
+			
+		}
+		
+		return $responseArray;
+		
+	}
+	
+	
+	/**
+	 * ハッシュキー作成
+	 * @param int $num
+	 */
+	public static function akatsukiHash( $num, $glue = '-', $bodyLength = 6 ) {
+		
+		$tmpNum =  rand( 1, 9 ) . $num . rand( 0, 9 ) . rand( 0, 9 );;
+		$tmpNum *= 3;
+		
+		$header = '';
+		do {
+			$header .= self::intTo26Char( $tmpNum );
+		} while( strlen( $tmpNum ) > $bodyLength );
+		
+		return $header . $glue . $tmpNum;
+		
+	}
+	
+	/**
+	 * 数値から26進数の値を取り出す
+	 * @param int $num
+	 */
+	private static function intTo26Char( &$num ) {
+	
+		$hashtable = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$hashLength = strlen( $hashtable );
+	
+		$mod = $num % $hashLength;
+		$word = $hashtable[$mod];
+		$num = ($num - $mod) / $hashLength;
+	
+		return $word;
+	
+	}
+	
+	
+	/**
+	 * 1ならTRUE、0ならFALSE、それ以外ならNULLを返す
+	 * @param string $string
+	 * @param boolean
+	 */
+	public static function string2Boolean( $string ) {
+		
+		if ( is_bool( $string ) === TRUE ) {
+			return $string;
+		} else {
+			;
+		}
+		
+		if ( strcmp( $string, '1' ) == 0 ) {
+			return TRUE;
+		} else if ( strcmp( $string, '0' ) == 0 ) {
+			return FALSE;
+		} else {
+			return NULL;
+		}
+		
+	}
+	
+	/**
+	 * 改行コードを置換する
+	 * @param string $string
+	 * @param string $to
+	 */
+	public static function convertEOL( $string, $to = PHP_EOL ) {
+		
+		return preg_replace( "/\r\n|\r|\n/", $to, $string );
+		
+	}
+	
 }

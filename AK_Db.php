@@ -51,7 +51,7 @@ abstract class AK_Db{
 	 * コンストラクタ
 	 * @param string $dbIdenTificationName
 	 */
-	final public function __construct( $dbIdenTificationName = self::DEFAULT_DB_IDENTIFICATION_NAME ) {
+	public function __construct( $dbIdenTificationName = self::DEFAULT_DB_IDENTIFICATION_NAME ) {
 		$this -> dbIdemtificationName = $dbIdenTificationName;
 	}
 	

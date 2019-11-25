@@ -23,6 +23,9 @@ class AK_Dao {
 	 * @var string
 	 */
 	private $dsn = null;
+	public function getDsn() {
+		return $this -> dsn;
+	}
 	
 	/**
 	 * ユーザ名
@@ -68,8 +71,29 @@ class AK_Dao {
 			$i++;
 		}
 		$sth -> execute();
+		
+		$datetimeColumnNameArray = array();
+		for ($i = 0; $i < $sth -> columncount(); ++$i ) {
+			$columnMeta = $sth -> getColumnMeta( $i );
+			$columnType = $columnMeta['native_type'];
+			
+			//if ( strcmp( $columnType, 'DATETIME' ) == 0 || strcmp( $columnType, 'TIMESTAMP' ) == 0 ) {
+			if ( strcmp( $columnType, 'DATETIME' ) == 0 || strcmp( $columnType, 'TIMESTAMP' ) == 0 || strcmp( $columnType, 'DATE' ) == 0 ) {
+				$datetimeColumnNameArray[] = $columnMeta['name'];
+			} else {
+				;
+			}
+		}
+		
 		$valueArray = array();
 		while ( $value = $sth -> fetch( PDO::FETCH_ASSOC ) ) {
+			foreach ( $datetimeColumnNameArray as $datetimeColumnName ) {
+				if ( strlen( $value[$datetimeColumnName] ) > 0 ) {
+					$value[$datetimeColumnName] = new AK_DateTime( $value[$datetimeColumnName] );
+				} else {
+					$value[$datetimeColumnName] = NULL;
+				}
+			}
 			$valueArray[] = $value;
 		}
 
@@ -207,16 +231,17 @@ class AK_Dao {
 	 * DB接続
 	 */
 	private function connect() {
+		
 		$this -> connection = new PDO(
 			  $this -> dsn
 			, $this -> user
 			, $this -> password
 			, array(
-				  PDO::ATTR_PERSISTENT         => FALSE
-				//, PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET `utf8`"
+				  PDO::ATTR_PERSISTENT => FALSE
 			)
 		);
 		$this -> connection -> setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+		$this -> connection -> setAttribute( PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC );
 	}
 	
 }

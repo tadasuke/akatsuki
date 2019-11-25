@@ -1,14 +1,16 @@
 <?php
 
-class AK_BaseController {
+abstract class AK_BaseController {
 	
-	const RESPONSE_TYPE_JSON  = 1;
-	const RESPONSE_TYPE_JSONP = 2;
-	const RESPONSE_TYPE_DATA  = 3;
+	const RESPONSE_TYPE_JSON    = 1;
+	const RESPONSE_TYPE_JSONP   = 2;
+	const RESPONSE_TYPE_DATA    = 3;
+	const RESPONSE_TYPE_MSGPACK = 4;
 	
-	const DEFAULT_JSON_CONTENT_TYPE  = 'Content-type: application/json; charset=UTF-8';
-	const DEFAULT_JSONP_CONTENT_TYPE = 'Content-type: application/javascript; charset=UTF-8';
-	const DEFALUT_DATA_CONTENT_TYPE  = 'Content-type: image/*';
+	const DEFAULT_JSON_CONTENT_TYPE    = 'Content-type: application/json; charset=UTF-8';
+	const DEFAULT_JSONP_CONTENT_TYPE   = 'Content-type: application/javascript; charset=UTF-8';
+	const DEFALUT_DATA_CONTENT_TYPE    = 'Content-type: image/*';
+	const DEFAULT_MSGPACK_CONTENT_TYPE = 'Content-type: application/x-msgpack; charset=x-user-defined';
 	
 	/**
 	 * コントローラ名
@@ -47,10 +49,47 @@ class AK_BaseController {
 	private $postParam = array();
 	
 	/**
+	 * リクエストボディパラメータ配列
+	 * @var array
+	 */
+	private $requestBodyParam = array();
+	public function getRequestBodyParam() {
+		return $this -> requestBodyParam;
+	}
+	
+	/**
 	 * ユーザパラメータ配列
 	 * @var array
 	 */
 	private $userParam = array();
+	
+	/**
+	 * リクエストパラメータ配列
+	 * @var array
+	 */
+	private $requestParamArray = NULL;
+	public function getRequestParam( $key = NULL ) {
+		
+		if ( is_null( $this -> requestParamArray ) === TRUE ) {
+			$this -> setRequestParamArray();
+		} else {
+			;
+		}
+		
+		if ( is_null( $key ) === TRUE ) {
+			$param = $this -> requestParamArray;
+		} else {
+			if ( array_key_exists( $key, $this -> requestParamArray ) === TRUE ) {
+				$param = $this -> requestParamArray[$key];
+			} else {
+				$param = NULL;
+			}
+		}
+		
+		return $param;
+		
+	}
+	
 	
 	/**
 	 * コールバック名
@@ -131,6 +170,40 @@ class AK_BaseController {
 		$this -> jsonEncodeFlg = $jsonEncodeFlg;
 	}
 	
+	/**
+	 * lzf圧縮フラグ
+	 * @var boolean
+	 */
+	private $lzfFlg = FALSE;
+	public function setLzfFlg( $lzfFlg ) {
+		$this -> lzfFlg = $lzfFlg;
+	}
+	
+	/**
+	 * lz4圧縮フラグ
+	 * @var boolean
+	 */
+	private $lz4Flg = FALSE;
+	public function setLz4Flg( $lz4Flg ) {
+		$this -> lz4Flg = $lz4Flg;
+	}
+	
+	/**
+	 * メッセージパックフラグ
+	 * @var boolean
+	 */
+	private $messagePackFlg = FALSE;
+	public function setMessagePackFlg( $messagePackFlg ) {
+		$this -> messagePackFlg = $messagePackFlg;
+		
+		if ( $this -> messagePackFlg === TRUE ) {
+			$this -> responseType = self::RESPONSE_TYPE_MSGPACK;
+		} else {
+			;
+		}
+		
+	}
+	
 	//---------------------------------- public ----------------------------------
 	
 	/**
@@ -141,14 +214,16 @@ class AK_BaseController {
 		$this -> getParam  = $_GET;
 		$this -> postParam = $_POST;
 		$this -> userParam = $userParamArray;
+		$this -> setRequestBodyParam();
 		// callbackパラメータが設定されていた場合
-		$callback = $this -> getGetAndPostParam( 'callback' );
+		$callback = $this -> getRequestParam( 'callback' );
 		if ( strlen( $callback ) > 0 ) {
 			$this -> setResponseType( self::RESPONSE_TYPE_JSONP );
 			$this -> setCallback( $callback );
 		} else {
 			;
 		}
+		
 	}
 	
 	/**
@@ -174,6 +249,7 @@ class AK_BaseController {
 		
 			// レスポンスパラメータが存在した場合
 			if ( count( $this -> responseParam ) > 0 ) {
+				
 				// レスポンスタイプがJSON形式の場合
 				if ( $this -> responseType == self::RESPONSE_TYPE_JSON ) {
 					if ( $this -> jsonEncodeFlg === TRUE ) {
@@ -184,26 +260,47 @@ class AK_BaseController {
 					$contentType = $this -> contentType ?: self::DEFAULT_JSON_CONTENT_TYPE;
 					header( 'X-Content-Type-Options: nosniff' );
 					header( $contentType );
+					
+					$response = $this -> compressResponse( $response );
+					
 					echo( $response );
-					$this -> setResponseTime( microtime( TRUE ) );
+					
 				// レスポンスタイプがJSONP形式の場合
 				} else if ( $this -> responseType == self::RESPONSE_TYPE_JSONP ) {
 					$response = json_encode( $this -> responseParam );
 					$contentType = $this -> contentType ?: self::DEFAULT_JSONP_CONTENT_TYPE;
 					header( 'X-Content-Type-Options: nosniff' );
 					header( $contentType );
+					
+					$response = $this -> compressResponse( $response );
+					
 					echo( $this -> callback . '(' . $response . ')' );
-					$this -> setResponseTime( microtime( TRUE ) );
+					
 				// レスポンスタイプがDATAの場合
 				} else if ( $this -> responseType == self::RESPONSE_TYPE_DATA ) {
 					$response = $this -> responseParam[0];
 					$contentType = $this -> contentType ?: self::DEFALUT_DATA_CONTENT_TYPE;
 					header( $contentType );
+					
+					$response = $this -> compressResponse( $response );
+					
 					echo( $response );
-					$this -> setResponseTime( microtime( TRUE ) );
+					
+				// レスポンスタイプがMessagePackの場合
+				} else if ( $this -> responseType == self::RESPONSE_TYPE_MSGPACK ) {
+					$response = msgpack_serialize( $this -> responseParam );
+					$contentType = $this -> contentType ?: self::DEFAULT_MSGPACK_CONTENT_TYPE;
+					header( 'X-Content-Type-Options: nosniff' );
+					header( 'X-MORI-MP: 1' );
+					header( $contentType );
+					
+					$response = $this -> compressResponse( $response );
+					
+					echo( $response );
 				} else {
 					;
 				}
+				$this -> setResponseTime( microtime( TRUE ) );
 			} else {
 				;
 			}
@@ -270,19 +367,6 @@ class AK_BaseController {
 	}
 	
 	/**
-	 * 全パラメータ取得
-	 * @return array
-	 */
-	protected function getAllParam() {
-		$postParamArray = $this -> getAllPostParam();
-		$getParamArray  = $this -> getAllGetParam();
-		foreach ( $getParamArray as $key => $value ) {
-			if ( !array_key_exists( $key, $postParamArray ) ) $postParamArray[$key] = $value;
-		}
-		return $postParamArray;
-	}
-	
-	/**
 	 * 全ユーザパラメータ取得
 	 * @return array
 	 */
@@ -306,6 +390,133 @@ class AK_BaseController {
 	 */
 	protected function addResponseParam( $key, $value ) {
 		$this -> responseParam[$key] = $value;
+	}
+	
+	
+	//-------------------------------------------- private function ---------------------------------------
+	
+	/**
+	 * リクエストボディパラメータ配列設定
+	 */
+	private function setRequestBodyParam() {
+		
+		$requestParamArray = array();
+		
+		$requestBody = file_get_contents( 'php://input' );
+		
+		if ( strlen( $requestBody ) > 0 ) {
+
+			// lzf圧縮されていた場合は解凍
+			if ( $this -> lzfFlg === TRUE ) {
+				$requestBody = lzf_decompress( $requestBody );
+			} else {
+				;
+			}
+			
+			// lz4圧縮されていた場合は解凍
+			if ( $this -> lz4Flg === TRUE ) {
+				$requestBody = lz4_uncompress( $requestBody );
+			} else {
+				;
+			}
+		
+			// メッセージパックを利用する場合
+			if ( $this -> messagePackFlg === TRUE ) {
+				$array = msgpack_unserialize( $requestBody );
+			// メッセージパックを利用しない場合
+			} else {
+				$array = json_decode( $requestBody, TRUE );
+			}
+			
+			if ( is_null( $array ) === FALSE ) {
+				foreach ( $array as $key => $value ) {
+					$requestParamArray[$key] = $value;
+				}
+			} else {
+				;
+			}
+		} else {
+			;
+		}
+		
+		$this -> requestBodyParam = $requestParamArray;
+		
+	}
+	
+	
+	/**
+	 * リクエストパラメータ設定
+	 */
+	private function setRequestParamArray() {
+		
+		$requestParamArray = array();
+		
+		// GET対応
+		if ( AK_Core::getGetParamValidFlg() === TRUE ) {
+			$requestParamArray = $this -> getParam;
+		} else {
+			;
+		}
+		
+		// リクエストボディ対応
+		$requestBodyParamFlg = FALSE;
+		if ( AK_Core::getRequestBodyParamValidFlg() === TRUE ) {
+			foreach ( $this -> requestBodyParam as $key => $value ) {
+				$requestBodyParamFlg = TRUE;
+				$requestParamArray[$key] = $value;
+			}
+		} else {
+			;
+		}
+		
+		// POST対応(ボディから値が取得できなかった場合のみ)
+		if ( $requestBodyParamFlg === FALSE ) {
+			if ( AK_Core::getPostParamValidFlg() === TRUE ) {
+				foreach ( $this -> postParam as $key => $value ) {
+					$requestParamArray[$key] = $value;
+				}
+			} else {
+				;
+			}
+		} else {
+			;
+		}
+		
+		// ユーザパラメータ対応
+		if ( AK_Core::getUserParamValidFlg() === TRUE ) {
+			foreach ( $this -> userParam as $key => $value ) {
+				$requestParamArray[$key] = $value;
+			}
+		} else {
+			;
+		}
+		
+		$this -> requestParamArray = $requestParamArray;
+		
+	}
+	
+	/**
+	 * レスポンス圧縮
+	 * @param string $response
+	 */
+	private function compressResponse( $response ) {
+		
+		if ( $this -> lzfFlg === TRUE ) {
+			$response = lzf_compress( $response );
+			header( 'X-MORI-LZF: 1' );
+		} else {
+				;
+		}
+					
+		if ( $this -> lz4Flg === TRUE ) {
+			$response = lz4_compress ( $response );
+			header( 'X-MORI-LZ4: 1' );
+		} else {
+			;
+		}
+		
+		return $response;
+		
 	}
 	
 }
